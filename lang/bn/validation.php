@@ -1,0 +1,48 @@
+<?php
+
+// Bangla validation messages (keys missing here fall back to English).
+return [
+    'accepted' => ':attribute গ্রহণ করতে হবে।',
+    'after_or_equal' => ':attribute অবশ্যই :date বা তার পরের তারিখ হতে হবে।',
+    'array' => ':attribute একটি তালিকা হতে হবে।',
+    'before_or_equal' => ':attribute অবশ্যই :date বা তার আগের তারিখ হতে হবে।',
+    'boolean' => ':attribute হ্যাঁ/না হতে হবে।',
+    'confirmed' => ':attribute মেলেনি।',
+    'date' => ':attribute সঠিক তারিখ নয়।',
+    'date_format' => ':attribute এর ফরম্যাট :format হতে হবে।',
+    'different' => ':attribute এবং :other ভিন্ন হতে হবে।',
+    'email' => ':attribute সঠিক ইমেইল নয়।',
+    'exists' => 'নির্বাচিত :attribute সঠিক নয়।',
+    'file' => ':attribute একটি ফাইল হতে হবে।',
+    'image' => ':attribute একটি ছবি হতে হবে।',
+    'in' => 'নির্বাচিত :attribute সঠিক নয়।',
+    'integer' => ':attribute পূর্ণসংখ্যা হতে হবে।',
+    'ip' => ':attribute সঠিক IP ঠিকানা নয়।',
+    'max' => [
+        'numeric' => ':attribute :max এর বেশি হতে পারবে না।',
+        'file' => ':attribute :max KB এর বেশি হতে পারবে না।',
+        'string' => ':attribute :max অক্ষরের বেশি হতে পারবে না।',
+        'array' => ':attribute এ :max টির বেশি থাকতে পারবে না।',
+    ],
+    'mimes' => ':attribute এর ধরন হতে হবে: :values।',
+    'min' => [
+        'numeric' => ':attribute কমপক্ষে :min হতে হবে।',
+        'file' => ':attribute কমপক্ষে :min KB হতে হবে।',
+        'string' => ':attribute কমপক্ষে :min অক্ষরের হতে হবে।',
+        'array' => ':attribute এ কমপক্ষে :min টি থাকতে হবে।',
+    ],
+    'not_in' => 'নির্বাচিত :attribute সঠিক নয়।',
+    'numeric' => ':attribute একটি সংখ্যা হতে হবে।',
+    'regex' => ':attribute এর ফরম্যাট সঠিক নয়।',
+    'required' => ':attribute দিতে হবে।',
+    'required_if' => ':other যখন :value, তখন :attribute দিতে হবে।',
+    'required_without' => ':values না দিলে :attribute দিতে হবে।',
+    'string' => ':attribute লেখা হতে হবে।',
+    'unique' => 'এই :attribute আগেই ব্যবহার করা হয়েছে।',
+    'url' => ':attribute সঠিক লিংক নয়।',
+    'attributes' => [
+        'name' => 'নাম', 'email' => 'ইমেইল', 'phone' => 'ফোন', 'mobile' => 'মোবাইল', 'password' => 'পাসওয়ার্ড', 'address' => 'ঠিকানা',
+        'price' => 'দাম', 'amount' => 'টাকার পরিমাণ', 'quantity' => 'পরিমাণ', 'title' => 'শিরোনাম', 'code' => 'কোড', 'date' => 'তারিখ',
+        'slug' => 'URL', 'status' => 'স্ট্যাটাস', 'message' => 'বার্তা', 'image' => 'ছবি',
+    ],
+];
