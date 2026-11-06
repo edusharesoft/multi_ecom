@@ -11,6 +11,7 @@
         <div class="d-flex align-items-center flex-wrap gap-2 topbar-actions">
             @include('partials.lang-switch', ['class' => 'text-white'])
             <span>|</span>
+            <a href="{{ route('user.manual') }}" target="_blank" rel="noopener" class="btn btn-sm btn-outline-light topbar-btn topbar-manual" title="{{ __('User Manual') }}"><i class="fa-solid fa-book-open"></i> <span class="d-none d-sm-inline">{{ __('User Manual') }}</span></a>
             @auth('branch')
                 <a href="{{ route('manager.dashboard') }}" class="btn btn-sm btn-outline-light topbar-btn"><i class="fa-solid fa-gauge"></i> Dashboard</a>
             @else
@@ -31,12 +32,13 @@
             @if ($siteLogo)<img src="{{ asset('storage/'.$siteLogo) }}" alt="{{ \App\Models\Setting::siteName() }}">@else<i class="fa-solid fa-shop"></i> {{ \App\Models\Setting::siteName() }}@endif
         </a>
         <nav class="main-nav d-flex gap-1 align-items-center" aria-label="Main navigation">
-            <a href="{{ route('home') }}" class="active">Home</a>
-            <a href="#branches">Shops</a>
-            <a href="#arrivals">New Arrivals</a>
-            <a href="#how">How to Buy</a>
-            <a href="{{ route('contact.us.frontend') }}">Contact</a>
-            <a href="{{ route('subscription.plan.frontend') }}">Subscriptions</a>
+            {{-- section links use the full home URL so they also work from Contact / Subscriptions pages --}}
+            <a href="{{ route('home') }}" @class(['active' => request()->routeIs('home')])>Home</a>
+            <a href="{{ route('home') }}#branches">Shops</a>
+            <a href="{{ route('home') }}#arrivals">New Arrivals</a>
+            <a href="{{ route('home') }}#how">How to Buy</a>
+            <a href="{{ route('contact.us.frontend') }}" @class(['active' => request()->routeIs('contact.us.frontend')])>Contact</a>
+            <a href="{{ route('subscription.plan.frontend') }}" @class(['active' => request()->routeIs('subscription.plan.frontend')])>Subscriptions</a>
         </nav>
         <form class="site-search-form" action="{{ route('home') }}#branches" method="GET" style="max-width:320px">
             <div class="input-group">

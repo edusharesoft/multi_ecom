@@ -91,6 +91,9 @@
         </div>
         <div class="tb-right">
             <div class="small">@include('partials.lang-switch')</div>
+            <a href="{{ rtrim(config('app.url'), '/') }}/user-manual#dashboard" target="_blank" rel="noopener" class="text-dark" title="{{ __('User Manual') }}">
+                <i class="fa-solid fa-circle-question fs-5" style="color:#16a34a"></i>
+            </a>
             <a href="{{ route('manager.notifications') }}" class="position-relative text-dark" title="Notifications">
                 <span class="position-relative"><i class="fa-regular fa-bell fs-5"></i>
                 @if (($unreadNotifications ?? 0) > 0)<span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size:9px">{{ $unreadNotifications }}</span>@endif</span>

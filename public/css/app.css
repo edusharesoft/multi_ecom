@@ -17,6 +17,8 @@ img{max-width:100%}
 .topbar{background:#1f2330;color:#d1d5db;font-size:13px;padding:8px 0;position:relative;z-index:1040}
 .topbar a{color:#d1d5db}.topbar a:hover{color:#fff}
 .topbar .dropdown-menu{z-index:2000;margin-top:6px}
+/* the sticky .site-header (z 1100) sits over the topbar; lift the topbar only while one of its menus is open */
+.topbar:focus-within,.topbar:has(.dropdown-menu.show){z-index:1101}
 .topbar .dropdown-menu .dropdown-item{color:var(--ink)!important;font-size:14px;font-weight:600;padding:8px 14px;background:#fff}
 .topbar .dropdown-menu .dropdown-item:hover,.topbar .dropdown-menu .dropdown-item:focus{color:var(--brand)!important;background:var(--brand-soft)}
 .topbar .dropdown-menu .dropdown-item.active{color:#fff!important;background:var(--brand)}
@@ -37,7 +39,18 @@ img{max-width:100%}
 .header-search select{max-width:130px;border-radius:6px 0 0 6px;background:var(--brand);color:#fff;border:0;font-size:13px}
 .header-search input{border-radius:0;border-left:0}
 .header-search .btn{border-radius:0 6px 6px 0}
-.site-search-form{width:100%;min-width:220px}
+.site-search-form{width:100%;min-width:180px;max-width:320px;flex:1 1 220px}
+/* laptops (992–1399px): keep logo + menu + search on one row */
+@media (min-width:992px) and (max-width:1399.98px){
+  .site-header .main-nav{gap:0!important}
+  .site-header .main-nav a{font-size:13px;padding:8px 9px}
+  .site-header .site-header-main{gap:.75rem!important}
+}
+@media (min-width:992px) and (max-width:1199.98px){
+  .site-header .main-nav a{font-size:12.5px;padding:8px 7px}
+  .site-header .logo img{height:38px}
+  .site-header .site-search-form{min-width:150px;flex-basis:150px}
+}
 .site-search-icon{background:#fff;color:var(--brand);border:1.5px solid rgba(15,23,42,.18);border-right:0;border-radius:9px 0 0 9px;padding:.45rem .65rem}
 .site-search-form .form-control{min-height:42px;font-size:15px;padding:.55rem .85rem;border:1.5px solid rgba(15,23,42,.18);border-radius:9px;box-shadow:0 2px 7px rgba(15,23,42,.07);transition:border-color .2s ease,box-shadow .2s ease}
 .site-search-form .input-group .form-control{border-radius:0 9px 9px 0}
@@ -54,6 +67,9 @@ img{max-width:100%}
 .banner-slider{position:relative;z-index:0}
 .main-nav a{color:var(--ink);font-weight:500;font-size:14px;text-transform:uppercase;padding:9px 12px;display:inline-block;flex:0 0 auto}
 .main-nav a:hover,.main-nav a.active{color:var(--brand)}
+.topbar .topbar-manual{border-color:#22c55e;color:#bbf7d0}.topbar .topbar-manual:hover{background:#16a34a;border-color:#16a34a;color:#fff}
+/* keep home sections clear of the sticky header when jumping from the menu */
+#branches,#arrivals,#how{scroll-margin-top:90px}
 
 /* sections */
 .section{padding:40px 0}

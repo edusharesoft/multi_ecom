@@ -59,6 +59,9 @@
                     {{ __('Track Order') }}</a> <span class="mx-2">|</span> <a
                     href="{{ route('login', ['branch' => $store->slug]) }}" rel="nofollow"><i
                         class="fa-solid fa-user-tie"></i> {{ __('Seller Login') }}</a>
+                {{-- buyer section of the user manual; absolute main-site URL so it also works on custom domains --}}
+                <span class="mx-2">|</span> <a href="{{ rtrim(config('app.url'), '/') }}/user-manual#store" target="_blank"
+                    rel="noopener"><i class="fa-solid fa-book-open"></i> {{ __('Shopping Guide') }}</a>
                 <button id="pwaInstallTop" type="button" class="pwa-install-top" title="এই শপটি মোবাইলে অ্যাপ হিসেবে ইনস্টল করুন">
                     <i class="fa-solid fa-mobile-screen-button"></i> <span>{{ __('PWA App') }}</span>
                 </button>
