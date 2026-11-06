@@ -128,7 +128,8 @@
 </div>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 @include('partials.panel-toggle')
-@include('pwa._register', ['sw' => route('pwa.manager.sw'), 'scope' => \App\Http\Controllers\PwaController::managerScope(), 'cachePrefix' => 'mb-m-pages-'])
+@include('pwa._register', ['sw' => route('pwa.manager.sw').'?v='.rawurlencode((string) env('PWA_VERSION', '3')), 'scope' => \App\Http\Controllers\PwaController::managerScope(), 'cachePrefix' => 'mb-m-pages-'])
+@include('partials.image-upload-compressor')
 @stack('scripts')
 </body>
 </html>

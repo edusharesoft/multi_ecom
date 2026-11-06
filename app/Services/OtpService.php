@@ -5,6 +5,8 @@ namespace App\Services;
 use App\Models\Branch;
 use App\Services\Sms\ShatajSmsService;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 
 class OtpService
 {
@@ -44,7 +46,17 @@ class OtpService
             session()->flash('dev_otp', $code);
         }
 
-        return $this->sms->send($branch->mobile, $message, true);   // OTP = priority
+        $smsSent = $this->sms->send($branch->mobile, $message, true);   // OTP = priority
+        $emailSent = false;
+        try {
+            Mail::raw("{$message}\n\nএই কোডটি {$minutes} মিনিট পর্যন্ত কার্যকর থাকবে।", function ($mail) use ($branch) {
+                $mail->to($branch->email)->subject(config('app.name').' — Registration OTP');
+            });
+            $emailSent = true;
+        } catch (\Throwable $e) {
+            Log::warning('Registration OTP email could not be sent', ['email' => $branch->email, 'error' => $e->getMessage()]);
+        }
+        return $smsSent || $emailSent;
     }
 
     /** @return string|null error message, null on success */

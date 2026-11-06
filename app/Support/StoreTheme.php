@@ -50,7 +50,7 @@ class StoreTheme
             'primary' => '#e41e26', 'font' => 'Poppins', 'radius' => 12,
             'tagline' => 'Style for Every Style | Shop Now at '.$b->display_name,
             'announcement_text' => '', 'announcement_link' => '', 'announcement_bg' => '#111827',
-            'footer_about' => '', 'instagram' => '', 'youtube' => '', 'tiktok' => '',
+            'footer_about' => '', 'footer_video' => null, 'instagram' => '', 'youtube' => '', 'tiktok' => '',
             'show_newsletter' => true, 'show_all_branches' => true,
         ], (array) $b->option('theme', []));
     }

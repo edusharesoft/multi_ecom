@@ -67,6 +67,7 @@ class BranchController extends Controller
             'status' => ['required', Rule::in(['active', 'inactive'])],
             'password' => ['nullable', Password::min(8)],
             'logo' => ['nullable', 'file', 'mimes:png,jpg,jpeg,webp', 'max:2048'],
+            'banner' => ['nullable', 'file', 'mimes:png,jpg,jpeg,webp', 'max:8192'],
         ]);
 
         if (empty($data['password'])) {
@@ -81,6 +82,15 @@ class BranchController extends Controller
         } elseif ($request->boolean('remove_logo') && $branch->logo) {
             $branch->deleteUpload($branch->logo);
             $data['logo'] = null;
+        }
+        unset($data['banner']);
+        if ($request->hasFile('banner')) {
+            $old = $branch->banner;
+            $data['banner'] = $branch->storeUpload($request->file('banner'), "branches/{$branch->id}");
+            $branch->deleteUpload($old);
+        } elseif ($request->boolean('remove_banner') && $branch->banner) {
+            $branch->deleteUpload($branch->banner);
+            $data['banner'] = null;
         }
         $branch->update($data);
 

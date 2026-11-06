@@ -9,10 +9,48 @@ use App\Models\Category;
 use App\Models\Page;
 use App\Models\Post;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
+use App\Models\MessageLog;
 
 /** Storefront pages, blog and per-store sitemap. */
 class ContentController extends Controller
 {
+    public function contact(Branch $branch)
+    {
+        return view('store.contact', ['branch' => $branch]);
+    }
+
+    public function submitContact(Request $request, Branch $branch)
+    {
+        $data = $request->validate([
+            'name' => ['required', 'string', 'max:120'],
+            'email' => ['required', 'email', 'max:150'],
+            'subject' => ['required', 'string', 'max:180'],
+            'message' => ['required', 'string', 'max:10000'],
+        ]);
+        $to = $branch->email;
+        $subject = '['.$branch->display_name.'] '.$data['subject'];
+        $status = 'sent';
+        $error = null;
+        try {
+            Mail::raw("নাম: {$data['name']}\nইমেইল: {$data['email']}\n\n{$data['message']}", function ($mail) use ($to, $subject, $data) {
+                $mail->to($to)->replyTo($data['email'], $data['name'])->subject($subject);
+            });
+        } catch (\Throwable $e) {
+            $status = 'failed';
+            $error = $e->getMessage();
+            Log::warning('Store contact message email failed', ['branch_id' => $branch->id, 'error' => $error]);
+        }
+        MessageLog::create([
+            'branch_id' => $branch->id, 'channel' => 'email', 'to' => $to,
+            'subject' => $subject, 'body' => $data['message'], 'status' => $status,
+            'context' => 'store.contact', 'error' => $error,
+        ]);
+
+        return redirect()->route('store.contact', $branch)->with($status === 'sent' ? 'success' : 'warning', $status === 'sent' ? 'আপনার বার্তা পাঠানো হয়েছে।' : 'বার্তা সংরক্ষণ হয়েছে, তবে ইমেইল পাঠানো যায়নি।');
+    }
+
     public function page(Branch $branch, string $slug)
     {
         $page = Page::where('branch_id', $branch->id)->where('slug', $slug)->where('is_published', true)->firstOrFail();

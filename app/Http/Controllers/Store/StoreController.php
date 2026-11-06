@@ -142,7 +142,7 @@ class StoreController extends Controller
             'name' => [$customer ? 'nullable' : 'required', 'string', 'max:100'],
             'rating' => ['required', 'integer', 'between:1,5'],
             'comment' => ['required', 'string', 'max:1000'],
-            'image' => ['nullable', 'image', 'max:2048'],
+                'image' => ['nullable', 'image', 'max:12288'],
         ]);
 
         // Verified purchase = logged-in customer with a delivered/completed order containing this product

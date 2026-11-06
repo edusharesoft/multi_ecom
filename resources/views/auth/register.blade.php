@@ -1,7 +1,7 @@
 @extends('layouts.auth')
 @section('title', __('Create Your Store'))
 @section('heading', __('Create Your Store'))
-@section('subheading', __('Fill in the information below to register your branch.'))
+@section('subheading', __('Fill in the information below to open your online shop.'))
 @section('auth_kind', 'register')
 @section('auth_size', 'wide')
 @section('auth_brand', 'platform')
@@ -13,12 +13,12 @@
 @endphp
 <form method="POST" action="{{ route('register') }}" novalidate>
     @csrf
-    <div class="row g-2">
-        <div class="col-sm-6">
+    <div>
+        <div>
             <div @class(['au-field', 'is-invalid' => $bad('name')])><span class="ic"><i class="fa-regular fa-user"></i></span><input name="name" value="{{ old('name') }}" placeholder="{{ __('Your name') }} *" required></div>
             @error('name')<div class="au-err">{{ $message }}</div>@enderror
         </div>
-        <div class="col-sm-6">
+        <div>
             <div @class(['au-field', 'is-invalid' => $bad('mobile')])><span class="ic"><i class="fa-solid fa-mobile-screen"></i></span><input name="mobile" value="{{ old('mobile') }}" placeholder="{{ __('Mobile') }} (01XXXXXXXXX) *" inputmode="tel" required></div>
             @error('mobile')<div class="au-err">{{ $message }}</div>@enderror
             @unless ($bad('mobile'))<div class="au-help">এই নম্বরে ভেরিফিকেশন OTP যাবে।</div>@endunless
@@ -27,7 +27,7 @@
     <div @class(['au-field', 'is-invalid' => $bad('email')])><span class="ic"><i class="fa-regular fa-envelope"></i></span><input type="email" name="email" value="{{ old('email') }}" placeholder="{{ __('Email address') }} *" required></div>
     @error('email')<div class="au-err">{{ $message }}</div>@enderror
 
-    <div @class(['au-field', 'is-invalid' => $bad('slug')])><span class="ic"><i class="fa-solid fa-globe"></i></span><span class="pre">{{ $base }}/</span><input name="slug" id="slug" value="{{ old('slug') }}" placeholder="your-branch-name *" autocomplete="off" autocapitalize="off" spellcheck="false" inputmode="url" required></div>
+    <div @class(['au-field', 'is-invalid' => $bad('slug')])><span class="ic"><i class="fa-solid fa-globe"></i></span><span class="pre">{{ $base }}/</span><input name="slug" id="slug" value="{{ old('slug') }}" placeholder="your-shop-name *" autocomplete="off" autocapitalize="off" spellcheck="false" inputmode="url" required></div>
     @error('slug')<div class="au-err">{{ $message }}</div>@enderror
     <div class="au-help" id="slugHelp">ইংরেজি অক্ষর (a-z), সংখ্যা ও হাইফেন (-)। বাংলায় লিখলে নিজে থেকেই ইংরেজি হয়ে যাবে, যেমন "ঢাকা শপ" → dhaka-shop।</div>
 
@@ -52,7 +52,7 @@
     </div>
     <button class="au-btn"><i class="fa-solid fa-store"></i> {{ __('Create My Store') }}</button>
     <a href="{{ route('login') }}" class="au-btn-2">{{ __('Already have an account? Login') }}</a>
-    <div class="au-note"><i class="fa-solid fa-circle-info text-primary"></i> {{ __('Your store address will be') }}: <code id="previewUrl">{{ $base }}/{{ old('slug') ?: 'your-branch-name' }}</code></div>
+    <div class="au-note"><i class="fa-solid fa-circle-info text-primary"></i> {{ __('Your online shop address will be') }}: <code id="previewUrl">{{ $base }}/{{ old('slug') ?: 'your-shop-name' }}</code></div>
 </form>
 @endsection
 
@@ -71,7 +71,7 @@
             input.value = clean;
             try { input.setSelectionRange(clean.length, clean.length); } catch (e) {}
         }
-        preview.textContent = base + '/' + (clean.replace(/-+$/, '') || 'your-branch-name');
+        preview.textContent = base + '/' + (clean.replace(/-+$/, '') || 'your-shop-name');
         clearTimeout(t);
         const slug = clean.replace(/^-+|-+$/g, '');
         if (slug.length < 3) { help.className = 'au-help'; help.textContent = slug.length ? 'কমপক্ষে ৩ অক্ষর।' : hint; return; }

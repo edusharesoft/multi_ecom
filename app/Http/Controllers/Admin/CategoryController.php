@@ -25,7 +25,7 @@ class CategoryController extends Controller
         $data = $this->validated($request);
         $data['slug'] = $this->slug($data['name']);
         if ($request->hasFile('image')) {
-            $data['image'] = $request->file('image')->store('categories', 'public');
+            $data['image'] = app(\App\Services\ImageUploadService::class)->store($request->file('image'), 'categories');
         }
         Category::create($data);
 
@@ -42,7 +42,7 @@ class CategoryController extends Controller
             if ($category->image) {
                 Storage::disk('public')->delete($category->image);
             }
-            $data['image'] = $request->file('image')->store('categories', 'public');
+            $data['image'] = app(\App\Services\ImageUploadService::class)->store($request->file('image'), 'categories');
         }
         $category->update($data);
 

@@ -1,0 +1,846 @@
+<!doctype html>
+<html lang="bn">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ইউজার ম্যানুয়াল — মাল্টি ব্রাঞ্চ ই-কমার্স</title>
+<script>
+/* Live-server safety net: if a screenshot cannot be loaded from manual-img/, try the Laravel
+   route /manual-file/... and other common layouts before giving up. Runs before images load. */
+(function(){
+  var dir = location.pathname.replace(/[^\/]*$/, '');
+  window.__manualAlt = function(rel){ return [dir + 'manual-file/' + rel, '/manual-file/' + rel, '/public/' + rel, dir + 'public/' + rel]; };
+  window.addEventListener('error', function(e){
+    var el = e.target;
+    if (!el || el.tagName !== 'IMG') return;
+    var m = (el.getAttribute('src') || '').match(/(manual-img\/[^?#]+)/);
+    if (!m) return;
+    var cands = window.__manualAlt(m[1]), n = +(el.getAttribute('data-try') || 0);
+    if (n >= cands.length) { var f = el.closest && el.closest('figure'); if (f) f.classList.add('missing'); return; }
+    el.setAttribute('data-try', n + 1);
+    el.src = cands[n];
+  }, true);
+})();
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<style>
+:root{
+  --bg:#f6f7fb; --card:#ffffff; --ink:#1e293b; --muted:#64748b; --line:#e5e7eb;
+  --brand:#6366f1; --brand2:#ec4899; --side:#ffffff; --tip:#ecfdf5; --tipb:#10b981;
+  --warn:#fff7ed; --warnb:#f97316; --info:#eff6ff; --infob:#3b82f6;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0f172a; --card:#1e293b; --ink:#e2e8f0; --muted:#94a3b8; --line:#334155;
+    --side:#111827; --tip:#064e3b55; --warn:#7c2d1255; --info:#1e3a8a55;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0f172a; --card:#1e293b; --ink:#e2e8f0; --muted:#94a3b8; --line:#334155;
+  --side:#111827; --tip:#064e3b55; --warn:#7c2d1255; --info:#1e3a8a55;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;font-family:"Hind Siliguri",system-ui,sans-serif;background:var(--bg);color:var(--ink);font-size:17px;line-height:1.75}
+a{color:var(--brand)}
+/* ---------- layout ---------- */
+.side{position:fixed;inset:0 auto 0 0;width:290px;background:var(--side);border-right:1px solid var(--line);overflow-y:auto;padding:18px 14px 40px;z-index:30;transition:transform .25s}
+.main{margin-left:290px;padding:0 0 60px}
+.wrap{max-width:1000px;margin:0 auto;padding:0 24px}
+.logo{display:flex;gap:10px;align-items:center;font-weight:700;font-size:18px;margin-bottom:14px}
+.logo i{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;color:#fff;background:linear-gradient(135deg,var(--brand),var(--brand2))}
+.search{width:100%;padding:10px 12px 10px 36px;border:1px solid var(--line);border-radius:10px;background:var(--bg);color:var(--ink);font:inherit;font-size:15px}
+.sbox{position:relative;margin-bottom:12px}.sbox i{position:absolute;left:12px;top:13px;color:var(--muted)}
+.toc a{display:flex;gap:10px;align-items:center;padding:7px 10px;border-radius:9px;text-decoration:none;color:var(--ink);font-size:15px}
+.toc a:hover,.toc a.on{background:color-mix(in srgb,var(--brand) 12%,transparent)}
+.toc a i{width:26px;height:26px;border-radius:8px;display:grid;place-items:center;font-size:12px;color:#fff;flex:none}
+.toc .grp{font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin:14px 10px 4px}
+.topbar{display:none}
+/* ---------- hero ---------- */
+.hero{background:linear-gradient(120deg,#6366f1 0%,#a855f7 45%,#ec4899 100%);color:#fff;padding:56px 0 70px;position:relative;overflow:hidden}
+.hero:after{content:"";position:absolute;right:-80px;top:-80px;width:320px;height:320px;border-radius:50%;background:#ffffff1a}
+.hero h1{font-size:40px;line-height:1.25;margin:0 0 10px}
+.hero p{font-size:19px;opacity:.95;margin:0 0 22px;max-width:640px}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{background:#ffffff26;border:1px solid #ffffff40;padding:5px 14px;border-radius:99px;font-size:14px}
+.tools{position:absolute;right:24px;top:18px;display:flex;gap:8px;z-index:2}
+.tools button{border:0;background:#ffffff2e;color:#fff;width:40px;height:40px;border-radius:10px;cursor:pointer;font-size:16px}
+/* ---------- sections ---------- */
+section{padding-top:34px}
+h2{font-size:28px;margin:0 0 6px;display:flex;align-items:center;gap:12px}
+h2 .ic{width:46px;height:46px;border-radius:14px;display:grid;place-items:center;color:#fff;font-size:20px;flex:none}
+.lead{color:var(--muted);margin:0 0 18px}
+h3{font-size:20px;margin:22px 0 8px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:22px 24px;box-shadow:0 1px 2px #0000000a;margin-bottom:16px}
+.grid{display:grid;gap:14px;grid-template-columns:repeat(auto-fill,minmax(230px,1fr))}
+.role{border-radius:18px;padding:20px;color:#fff}
+.role i{font-size:28px}.role h4{margin:8px 0 4px;font-size:20px}.role p{margin:0;font-size:15px;opacity:.95}
+.steps{counter-reset:s;list-style:none;padding:0;margin:0}
+.steps li{counter-increment:s;position:relative;padding:4px 0 14px 54px}
+.steps li:before{content:counter(s);position:absolute;left:0;top:2px;width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,var(--brand),var(--brand2));color:#fff;display:grid;place-items:center;font-weight:700}
+.steps li:not(:last-child):after{content:"";position:absolute;left:18px;top:42px;bottom:0;width:2px;background:var(--line)}
+.steps b{display:block}
+.mod{display:flex;gap:16px;align-items:flex-start}
+.mod>.ic{width:52px;height:52px;border-radius:15px;display:grid;place-items:center;color:#fff;font-size:22px;flex:none}
+.mod h3{margin:0 0 4px}
+.mod ul{margin:6px 0 0;padding-left:20px}
+.path{display:inline-flex;flex-wrap:wrap;align-items:center;gap:6px;background:var(--bg);border:1px dashed var(--line);border-radius:10px;padding:3px 12px;font-size:14px;margin:2px 0 6px}
+.path i{font-size:10px;color:var(--muted)}
+.note{border-left:5px solid;border-radius:12px;padding:12px 16px;margin:12px 0;font-size:16px}
+.note.tip{background:var(--tip);border-color:var(--tipb)}
+.note.warn{background:var(--warn);border-color:var(--warnb)}
+.note.info{background:var(--info);border-color:var(--infob)}
+.note b:first-child{margin-right:4px}
+table{width:100%;border-collapse:collapse;font-size:15px}
+th,td{padding:10px 12px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+th{background:var(--bg);font-weight:600}
+.tbl{overflow-x:auto;border:1px solid var(--line);border-radius:14px;background:var(--card)}
+.flow{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.st{padding:6px 14px;border-radius:99px;font-size:14px;font-weight:600;color:#fff}
+.flow .ar{color:var(--muted)}
+details{background:var(--card);border:1px solid var(--line);border-radius:14px;margin-bottom:10px;padding:0 18px}
+summary{cursor:pointer;padding:14px 0;font-weight:600;list-style:none;display:flex;gap:10px;align-items:center}
+summary:before{content:"\f059";font-family:"Font Awesome 6 Free";font-weight:900;color:var(--brand)}
+details[open] summary{border-bottom:1px solid var(--line)}
+details p{margin:12px 0 16px}
+kbd{background:var(--bg);border:1px solid var(--line);border-bottom-width:2px;border-radius:6px;padding:0 6px;font-size:14px}
+.hidden{display:none!important}
+footer{text-align:center;color:var(--muted);font-size:14px;margin-top:40px}
+/* ---------- screenshots ---------- */
+figure.shot{margin:14px 0 20px;background:var(--card);border:1px solid var(--line);border-radius:16px;overflow:hidden;box-shadow:0 8px 24px #0f172a14}
+figure.shot .bar{display:flex;gap:6px;align-items:center;padding:8px 12px;background:var(--bg);border-bottom:1px solid var(--line)}
+figure.shot .bar span{width:10px;height:10px;border-radius:50%}
+figure.shot .bar span:nth-child(1){background:#ef4444}figure.shot .bar span:nth-child(2){background:#f59e0b}figure.shot .bar span:nth-child(3){background:#22c55e}
+figure.shot .bar em{font-style:normal;font-size:12px;color:var(--muted);margin-left:8px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+figure.shot img{display:block;width:100%;height:auto;cursor:zoom-in}
+figure.shot figcaption{padding:10px 16px;font-size:15px;color:var(--muted);border-top:1px solid var(--line)}
+figure.shot figcaption b{color:var(--ink)}
+figure.shot.missing img{display:none}
+figure.shot.missing figcaption:before{content:"⚠️ ছবিটি লোড হয়নি — সার্ভারে public/manual-img ফোল্ডারটি আপলোড হয়েছে কিনা দেখুন। ";color:#dc2626;display:block}
+.shots2{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(300px,1fr))}
+.shots2 figure.shot{margin:0}
+figure.shot.phone{max-width:300px;margin-left:auto;margin-right:auto}
+.lb{position:fixed;inset:0;background:#0f172ae6;display:none;place-items:center;z-index:99;padding:20px;cursor:zoom-out}
+.lb.on{display:grid}.lb img{max-width:100%;max-height:92vh;border-radius:12px;box-shadow:0 20px 60px #000}
+.dl{display:flex;flex-wrap:wrap;gap:10px;margin-top:22px}
+.dl a{display:inline-flex;gap:8px;align-items:center;background:#fff;color:#4f46e5;text-decoration:none;font-weight:600;padding:9px 16px;border-radius:12px;font-size:15px}
+@media print{
+  .dl{display:none}
+  figure.shot{box-shadow:none;break-inside:avoid}figure.shot img{max-height:150mm;object-fit:contain}
+  section[data-s]{break-before:page;padding-top:0}
+  h2,h3{break-after:avoid}
+  .card.mod{break-inside:auto}
+}
+.c1{background:#6366f1}.c2{background:#16a34a}.c3{background:#f59e0b}.c4{background:#0ea5e9}.c5{background:#ef4444}.c6{background:#8b5cf6}
+.c7{background:#ec4899}.c8{background:#14b8a6}.c9{background:#f97316}.c10{background:#a855f7}.c11{background:#0f766e}.c12{background:#64748b}.c13{background:#eab308}.c14{background:#e11d48}
+/* ---------- responsive ---------- */
+@media (max-width:900px){
+  .side{transform:translateX(-100%)}.side.open{transform:none;box-shadow:0 0 0 100vmax #0006}
+  .main{margin-left:0}
+  .topbar{display:flex;position:sticky;top:0;z-index:20;background:var(--card);border-bottom:1px solid var(--line);padding:10px 16px;align-items:center;gap:12px;font-weight:700}
+  .topbar button{border:0;background:var(--bg);color:var(--ink);width:40px;height:40px;border-radius:10px;font-size:18px}
+  .wrap{padding:0 16px}
+  .hero{padding:40px 0 50px}.hero h1{font-size:30px}
+  .tools{top:10px;right:16px}
+  .mod{flex-direction:column;gap:10px}
+}
+@media print{
+  .side,.topbar,.tools,.sbox{display:none!important}
+  .main{margin:0}
+  details{break-inside:avoid}details:not([open]) p{display:block}
+  .card{break-inside:avoid}
+}
+/* ---------- কাগজ-সাশ্রয়ী (compact) প্রিন্ট ---------- */
+@media print{
+  html.compact body{font-size:10.5pt;line-height:1.45;background:#fff;color:#111}
+  html.compact .wrap{max-width:none;padding:0}
+  html.compact .hero{background:#fff;color:#1e1b4b;padding:0 0 6px;border-bottom:3px solid #6366f1;margin-bottom:4px}
+  html.compact .hero:after,html.compact .hero .chips{display:none}
+  html.compact .hero h1{font-size:18pt;line-height:1.3;margin:0 0 2px;color:#4f46e5}
+  html.compact .hero p{font-size:10pt;margin:0;color:#334155;max-width:none}
+  html.compact section[data-s]{break-before:auto;padding-top:10px}
+  html.compact h2{font-size:15pt;margin:6px 0 2px;gap:8px;border-bottom:1.5px solid #c7d2fe;padding-bottom:3px}
+  html.compact h2 .ic{width:26px;height:26px;font-size:12px;border-radius:7px}
+  html.compact h3{font-size:12pt;margin:8px 0 3px}
+  html.compact .lead{margin:0 0 6px;font-size:10pt}
+  html.compact p{margin:3px 0}
+  html.compact .card{padding:7px 10px;margin-bottom:6px;border-radius:8px;box-shadow:none}
+  html.compact .grid{grid-template-columns:repeat(3,1fr);gap:6px}
+  html.compact .role{padding:7px 10px;border-radius:8px;background:#fff!important;color:#111;border:1px solid #cbd5e1;border-left:5px solid #6366f1}
+  html.compact .role i{font-size:14px;color:#6366f1}html.compact .role h4{font-size:11pt;margin:2px 0}html.compact .role p{font-size:9.5pt}
+  html.compact .mod{gap:8px}html.compact .mod>.ic{width:28px;height:28px;font-size:13px;border-radius:7px}
+  html.compact .mod ul,html.compact .mod ol,html.compact .card ol{margin:2px 0;padding-left:18px}
+  html.compact .steps li{padding:1px 0 5px 30px}
+  html.compact .steps li:before{width:22px;height:22px;font-size:10pt;top:1px}
+  html.compact .steps li:not(:last-child):after{left:10px;top:24px}
+  html.compact .note{padding:4px 10px;margin:5px 0;font-size:9.5pt;border-left-width:3px}
+  html.compact .path{font-size:9pt;padding:0 8px;margin:0 0 3px}
+  html.compact .st{padding:1px 8px;font-size:8.5pt}
+  html.compact table{font-size:9pt}html.compact th,html.compact td{padding:3px 7px}
+  html.compact details{padding:0 10px;margin-bottom:4px;border-radius:8px}
+  html.compact summary{padding:4px 0}html.compact details p{margin:3px 0 5px}
+  html.compact .card[style*="gradient"]{background:#fff!important;color:#111!important;border:1.5px solid #ec4899!important}
+  /* screenshots: two per row, three in the admin gallery */
+  html.compact .shots2{display:contents}
+  html.compact figure.shot{display:inline-block;width:calc(50% - 14px);vertical-align:top;margin:3px 4px;border-radius:6px;box-shadow:none}
+  html.compact #admin figure.shot{width:calc(33.3% - 14px)}
+  html.compact .card,html.compact .card.mod{break-inside:auto}
+  html.compact figure.shot.phone{width:22%;max-width:none}
+  html.compact figure.shot .bar{display:none}
+  html.compact figure.shot img{max-height:62mm;object-fit:contain;background:#f8fafc}
+  html.compact figure.shot figcaption{padding:2px 6px;font-size:8.5pt;line-height:1.3}
+  html.compact footer{margin-top:8px}
+}
+</style>
+</head>
+<body>
+
+<div class="topbar"><button id="menuBtn" aria-label="মেনু"><i class="fa-solid fa-bars"></i></button>ইউজার ম্যানুয়াল</div>
+
+<aside class="side" id="side">
+  <div class="logo"><i class="fa-solid fa-store"></i> ইউজার ম্যানুয়াল</div>
+  <div class="sbox"><i class="fa-solid fa-magnifying-glass"></i><input id="q" class="search" placeholder="খুঁজুন… (যেমন: কুপন, POS)"></div>
+  <nav class="toc" id="toc">
+    <div class="grp">শুরু করুন</div>
+    <a href="#intro"><i class="fa-solid fa-house c1"></i>পরিচিতি</a>
+    <a href="#start"><i class="fa-solid fa-rocket c7"></i>দ্রুত শুরু (৫ ধাপ)</a>
+    <a href="#panel"><i class="fa-solid fa-table-columns c4"></i>প্যানেল চেনা</a>
+    <div class="grp">দোকান পরিচালনা</div>
+    <a href="#dashboard"><i class="fa-solid fa-gauge-high c1"></i>ড্যাশবোর্ড</a>
+    <a href="#products"><i class="fa-solid fa-boxes-stacked c4"></i>প্রোডাক্ট ও ব্র্যান্ড</a>
+    <a href="#orders"><i class="fa-solid fa-receipt c3"></i>অর্ডার</a>
+    <a href="#courier"><i class="fa-solid fa-truck-fast c4"></i>কুরিয়ার ও শিপমেন্ট</a>
+    <a href="#returns"><i class="fa-solid fa-rotate-left c5"></i>রিটার্ন ও রিফান্ড</a>
+    <a href="#pos"><i class="fa-solid fa-cash-register c2"></i>POS (দোকানে বিক্রি)</a>
+    <a href="#inventory"><i class="fa-solid fa-warehouse c6"></i>ইনভেন্টরি ও ক্রয়</a>
+    <a href="#customers"><i class="fa-solid fa-users c7"></i>কাস্টমার (CRM)</a>
+    <a href="#marketing"><i class="fa-solid fa-bullhorn c5"></i>মার্কেটিং, কুপন, রিভিউ</a>
+    <a href="#website"><i class="fa-solid fa-globe c8"></i>ওয়েবসাইট, SEO ও ব্লগ</a>
+    <a href="#reports"><i class="fa-solid fa-chart-pie c9"></i>রিপোর্ট ও AI</a>
+    <a href="#accounts"><i class="fa-solid fa-scale-balanced c11"></i>হিসাব ও খরচ</a>
+    <a href="#hr"><i class="fa-solid fa-id-card-clip c10"></i>HR, স্টাফ ও রোল</a>
+    <a href="#settings"><i class="fa-solid fa-gear c12"></i>সেটিংস ও সাবস্ক্রিপশন</a>
+    <div class="grp">অন্যান্য</div>
+    <a href="#store"><i class="fa-solid fa-bag-shopping c9"></i>ক্রেতার জন্য গাইড</a>
+    <a href="#admin"><i class="fa-solid fa-user-shield c14"></i>সুপার অ্যাডমিন</a>
+    <a href="#plans"><i class="fa-solid fa-layer-group c13"></i>প্ল্যান ও ফিচার</a>
+    <a href="#faq"><i class="fa-solid fa-circle-question c1"></i>প্রশ্নোত্তর ও সমস্যা</a>
+  </nav>
+</aside>
+
+<div class="main">
+<header class="hero">
+  <div class="tools">
+    <button id="themeBtn" title="ডার্ক / লাইট"><i class="fa-solid fa-circle-half-stroke"></i></button>
+    <button onclick="window.print()" title="প্রিন্ট / PDF"><i class="fa-solid fa-print"></i></button>
+    <button id="ecoBtn" title="কাগজ-সাশ্রয়ী প্রিন্ট"><i class="fa-solid fa-leaf"></i></button>
+  </div>
+  <div class="wrap">
+    <h1>🛍️ মাল্টি ব্রাঞ্চ ই-কমার্স<br>ইউজার ম্যানুয়াল</h1>
+    <p>এক প্ল্যাটফর্মে অনেক দোকান — প্রতিটি দোকানের নিজস্ব অনলাইন স্টোর, POS, স্টক, কুরিয়ার, হিসাব আর মার্কেটিং। এই গাইড ধাপে ধাপে সহজ ভাষায় সব দেখাবে।</p>
+    <div class="chips"><span class="chip">🏪 দোকান মালিক</span><span class="chip">👥 স্টাফ</span><span class="chip">🛒 ক্রেতা</span><span class="chip">🛡️ সুপার অ্যাডমিন</span><span class="chip">📸 ৮০+ স্ক্রিনশট</span></div>
+    <div class="dl">
+      <a href="manual/user-manual.pdf" download><i class="fa-solid fa-file-pdf" style="color:#dc2626"></i> PDF ডাউনলোড</a>
+      <a href="manual/user-manual.docx" download><i class="fa-solid fa-file-word" style="color:#2563eb"></i> Word ডাউনলোড</a>
+      <a href="manual/user-manual-compact.pdf" download><i class="fa-solid fa-leaf" style="color:#16a34a"></i> কাগজ-সাশ্রয়ী PDF</a>
+      <a href="manual/user-manual-compact.docx" download><i class="fa-solid fa-leaf" style="color:#16a34a"></i> কাগজ-সাশ্রয়ী Word</a>
+      <a href="manual/video-script.docx" download><i class="fa-solid fa-film" style="color:#9333ea"></i> ভিডিও স্ক্রিপ্ট</a>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+
+<!-- ================= INTRO ================= -->
+<section id="intro" data-s>
+  <h2><span class="ic c1"><i class="fa-solid fa-house"></i></span>পরিচিতি</h2>
+  <p class="lead">এটি একটি SaaS (সাবস্ক্রিপশন-ভিত্তিক) প্ল্যাটফর্ম। যে কেউ রেজিস্টার করে একটি প্ল্যান নিয়ে নিজের অনলাইন দোকান চালু করতে পারেন। প্রতিটি দোকানের ডেটা সম্পূর্ণ আলাদা থাকে।</p>
+  <div class="grid">
+    <div class="role c1"><i class="fa-solid fa-store"></i><h4>দোকান মালিক</h4><p>নিজের স্টোর, প্রোডাক্ট, অর্ডার, স্টাফ ও সাবস্ক্রিপশন সব নিয়ন্ত্রণ করেন। প্যানেল: <b>/manager</b></p></div>
+    <div class="role c8"><i class="fa-solid fa-user-tie"></i><h4>স্টাফ</h4><p>মালিক যে রোল/পারমিশন দেন শুধু সেই মেনুগুলো দেখতে ও কাজ করতে পারেন।</p></div>
+    <div class="role c9"><i class="fa-solid fa-cart-shopping"></i><h4>ক্রেতা</h4><p>দোকানের ওয়েবসাইট থেকে কেনাকাটা, অর্ডার ট্র্যাক, রিটার্ন ও ওয়ালেট ব্যবহার করেন।</p></div>
+    <div class="role c14"><i class="fa-solid fa-user-shield"></i><h4>সুপার অ্যাডমিন</h4><p>পুরো প্ল্যাটফর্মের মালিক — প্ল্যান, দোকান, পেমেন্ট গেটওয়ে, ব্যাকআপ পরিচালনা করেন। প্যানেল: <b>/admin</b></p></div>
+  </div>
+  <div class="card" style="margin-top:16px">
+    <h3 style="margin-top:0"><i class="fa-solid fa-link" style="color:var(--brand)"></i> গুরুত্বপূর্ণ ঠিকানা (URL)</h3>
+    <div class="tbl"><table>
+      <tr><th>কার জন্য</th><th>ঠিকানা</th></tr>
+      <tr><td>দোকান মালিক রেজিস্ট্রেশন</td><td><code>আপনার-ডোমেইন/register</code></td></tr>
+      <tr><td>দোকান মালিক / স্টাফ লগইন</td><td><code>আপনার-ডোমেইন/login</code></td></tr>
+      <tr><td>দোকান পরিচালনা প্যানেল</td><td><code>আপনার-ডোমেইন/manager</code></td></tr>
+      <tr><td>দোকানের অনলাইন স্টোর</td><td><code>আপনার-ডোমেইন/দোকানের-slug</code> (অথবা নিজস্ব কাস্টম ডোমেইন)</td></tr>
+      <tr><td>সুপার অ্যাডমিন লগইন</td><td><code>আপনার-ডোমেইন/admin/login</code></td></tr>
+    
+<div class="shots2">
+<figure class="shot " data-img="01-landing"><div class="bar"><span></span><span></span><span></span><em>/</em></div><img src="manual-img/01-landing.jpg" alt="মূল ওয়েবসাইট — এখান থেকে নতুন দোকান খোলা যায়" loading="lazy"><figcaption><b>মূল ওয়েবসাইট</b> — এখান থেকে নতুন দোকান খোলা যায়</figcaption></figure>
+<figure class="shot " data-img="02-plans-public"><div class="bar"><span></span><span></span><span></span><em>/subscription/plan</em></div><img src="manual-img/02-plans-public.jpg" alt="প্যাকেজ / প্ল্যান — দাম ও ফিচার তুলনা" loading="lazy"><figcaption><b>প্যাকেজ / প্ল্যান</b> — দাম ও ফিচার তুলনা</figcaption></figure></div>
+</table></div>
+  </div>
+</section>
+
+<!-- ================= QUICK START ================= -->
+<section id="start" data-s>
+  <h2><span class="ic c7"><i class="fa-solid fa-rocket"></i></span>দ্রুত শুরু — ৫ ধাপে দোকান চালু</h2>
+  <p class="lead">নতুন দোকান মালিকরা এই ধাপগুলো অনুসরণ করুন।</p>
+  <div class="card">
+  <ol class="steps">
+    <li><b>রেজিস্টার করুন</b><code>/register</code> পেজে নাম, মোবাইল, ইমেইল, ঠিকানা, পাসওয়ার্ড ও দোকানের <b>slug</b> (স্টোরের লিংকের নাম, যেমন <code>my-shop</code>) দিন। slug টি খালি আছে কিনা সাথে সাথে দেখাবে। শর্তে টিক দিয়ে জমা দিন।</li>
+    <li><b>OTP দিয়ে যাচাই করুন</b>আপনার মোবাইলে SMS-এ একটি কোড যাবে। কোডটি বসিয়ে অ্যাকাউন্ট ভেরিফাই করুন। কোড না এলে "আবার পাঠান" চাপুন।</li>
+    <li><b>প্ল্যান বাছাই করুন (Select Subscription)</b>Free, মাসিক, বার্ষিক বা লাইফটাইম প্ল্যান থেকে আপনার প্রয়োজনমতো একটি বেছে নিন। ফ্রি ট্রায়াল থাকলে সরাসরি পরের ধাপে যাবেন।</li>
+    <li><b>পেমেন্ট করুন (Payment)</b>পেইড প্ল্যানে ShatajPay / bKash / Nagad ইত্যাদি দিয়ে ইনভয়েস পরিশোধ করুন। পেমেন্ট সফল হলে প্ল্যান সক্রিয় হয়।</li>
+    <li><b>স্টোর তৈরি করুন (Create Store)</b>দোকানের নাম, ফোন, লোগো ইত্যাদি দিন। ব্যস! আপনি ড্যাশবোর্ডে চলে যাবেন এবং স্টোর লাইভ।</li>
+  </ol>
+  </div>
+  
+<div class="shots2">
+<figure class="shot " data-img="03-register"><div class="bar"><span></span><span></span><span></span><em>/register</em></div><img src="manual-img/03-register.jpg" alt="ধাপ ১: রেজিস্ট্রেশন ফর্ম" loading="lazy"><figcaption><b>ধাপ ১:</b> রেজিস্ট্রেশন ফর্ম</figcaption></figure>
+<figure class="shot " data-img="04-login"><div class="bar"><span></span><span></span><span></span><em>/login</em></div><img src="manual-img/04-login.jpg" alt="লগইন পেজ — দোকান মালিক ও স্টাফ এখান থেকে ঢুকবেন" loading="lazy"><figcaption><b>লগইন পেজ</b> — দোকান মালিক ও স্টাফ এখান থেকে ঢুকবেন</figcaption></figure></div>
+<div class="note tip"><b>💡 টিপস:</b> দোকান চালুর পর প্রথমে <b>সেটিংস → লোগো, ডেলিভারি চার্জ, পেমেন্ট পদ্ধতি</b> ঠিক করুন, তারপর প্রোডাক্ট যোগ করুন, শেষে <b>ওয়েবসাইট</b> থেকে হোমপেজ সাজান।</div>
+</section>
+
+<!-- ================= PANEL ================= -->
+<section id="panel" data-s>
+  <h2><span class="ic c4"><i class="fa-solid fa-table-columns"></i></span>প্যানেল চেনা</h2>
+  <p class="lead">লগইনের পর আপনি যে স্ক্রিন দেখবেন তার অংশগুলো।</p>
+  <div class="grid">
+    <div class="card"><h3 style="margin-top:0">⬅️ বাম পাশের মেনু</h3>সব মডিউল রঙিন আইকনসহ সাজানো। যে মেনুর পাশে <i class="fa-solid fa-lock"></i> তালা আছে, সেটি আপনার প্ল্যানে নেই — ক্লিক করলে প্ল্যান আপগ্রেড পেজে যাবে।</div>
+    <div class="card"><h3 style="margin-top:0">🔔 উপরের বার</h3>নোটিফিকেশন ঘণ্টা (নতুন অর্ডার ইত্যাদি), আপনার নাম/রোল, এবং লগআউট বাটন। মোবাইলে <i class="fa-solid fa-bars"></i> চেপে মেনু খুলুন।</div>
+    <div class="card"><h3 style="margin-top:0">🏷️ প্ল্যান ব্যাজ</h3>মেনুর নিচে আপনার বর্তমান প্ল্যানের নাম দেখায় (Trial হলে লেখা থাকে)। ক্লিক করলে সাবস্ক্রিপশন পেজ।</div>
+    <div class="card"><h3 style="margin-top:0">🌐 ভাষা</h3>বাংলা ও ইংরেজি — দুই ভাষাতেই প্যানেল ব্যবহার করা যায়। ভাষা পরিবর্তনের বাটন থেকে বদলান।</div>
+  </div>
+  
+<figure class="shot " data-img="10-dashboard"><div class="bar"><span></span><span></span><span></span><em>/manager</em></div><img src="manual-img/10-dashboard.jpg" alt="দোকান পরিচালনা প্যানেল — বামে রঙিন মেনু, উপরে নোটিফিকেশন ও প্রোফাইল" loading="lazy"><figcaption><b>দোকান পরিচালনা প্যানেল</b> — বামে রঙিন মেনু, উপরে নোটিফিকেশন ও প্রোফাইল</figcaption></figure>
+<div class="note info"><b>📱 মোবাইল অ্যাপের মতো:</b> প্যানেল ও স্টোর দুটোই PWA — মোবাইল ব্রাউজারের মেনু থেকে "Add to Home screen" দিলে অ্যাপের মতো আইকন তৈরি হবে।</div>
+</section>
+
+<!-- ================= DASHBOARD ================= -->
+<section id="dashboard" data-s>
+  <h2><span class="ic c1"><i class="fa-solid fa-gauge-high"></i></span>ড্যাশবোর্ড</h2>
+  <div class="card">
+    <p style="margin-top:0">এক নজরে আজকের ও মাসের বিক্রি, নতুন অর্ডার, কাস্টমার, কম স্টকের প্রোডাক্ট ও চার্ট দেখায়। প্রতিদিন কাজ শুরুর আগে এখানে চোখ বুলিয়ে নিন।</p>
+    
+<figure class="shot " data-img="50-notifications"><div class="bar"><span></span><span></span><span></span><em>/manager/notifications</em></div><img src="manual-img/50-notifications.jpg" alt="নোটিফিকেশন — নতুন অর্ডার, কম স্টক ইত্যাদির বার্তা" loading="lazy"><figcaption><b>নোটিফিকেশন</b> — নতুন অর্ডার, কম স্টক ইত্যাদির বার্তা</figcaption></figure>
+<div class="note tip"><b>💡</b> লাল/হলুদ সতর্কবার্তা দেখলে (যেমন "সাবস্ক্রিপশনের মেয়াদ শেষ" বা "পেমেন্ট বাকি") সাথে সাথে লিংকে ক্লিক করে সমাধান করুন।</div>
+  </div>
+</section>
+
+<!-- ================= PRODUCTS ================= -->
+<section id="products" data-s>
+  <h2><span class="ic c4"><i class="fa-solid fa-boxes-stacked"></i></span>প্রোডাক্ট ও ব্র্যান্ড</h2>
+  <div class="card mod"><div class="ic c4"><i class="fa-solid fa-box"></i></div><div>
+    <h3>নতুন প্রোডাক্ট যোগ করা</h3>
+    <span class="path">প্রোডাক্ট <i class="fa-solid fa-chevron-right"></i> Manage Products <i class="fa-solid fa-chevron-right"></i> + নতুন</span>
+    <ol>
+      <li><b>নাম, ক্যাটাগরি, সাব-ক্যাটাগরি ও ব্র্যান্ড</b> বাছাই করুন।</li>
+      <li><b>দাম:</b> বিক্রয় মূল্য, পুরনো দাম (কাটা দাম দেখাতে), ক্রয় মূল্য (লাভ হিসাবের জন্য)।</li>
+      <li><b>অফার:</b> Sale Price এর সাথে শুরু ও শেষের তারিখ দিলে নির্দিষ্ট সময় পর্যন্ত ডিসকাউন্ট চলবে।</li>
+      <li><b>স্টক:</b> পরিমাণ, ইউনিট, সর্বনিম্ন স্টক (এর নিচে নামলে সতর্কবার্তা), SKU / বারকোড / প্রোডাক্ট কোড।</li>
+      <li><b>ভ্যারিয়েন্ট (Size / Color):</b> একই প্রোডাক্টের ভিন্ন সাইজ বা রং আলাদা দাম ও স্টকসহ যোগ করুন।</li>
+      <li><b>ছবি ও ভিডিও:</b> প্রধান ছবি + গ্যালারি (একাধিক ছবি), চাইলে YouTube ভিডিও লিংক। ছবি আপলোডের সময় নিজে থেকে ছোট (compress) হয়ে যায়।</li>
+      <li><b>বিবরণ ও স্পেসিফিকেশন</b> লিখুন। <b>Featured</b> টিক দিলে হোমপেজে বিশেষভাবে দেখাবে।</li>
+      <li><b>SEO:</b> Meta Title, Description, Keywords — গুগলে খুঁজে পাওয়ার জন্য।</li>
+    </ol>
+  </div></div>
+<div class="shots2">
+<figure class="shot " data-img="11-products"><div class="bar"><span></span><span></span><span></span><em>/manager/products</em></div><img src="manual-img/11-products.jpg" alt="প্রোডাক্ট তালিকা — খোঁজা, ফিল্টার, এডিট" loading="lazy"><figcaption><b>প্রোডাক্ট তালিকা</b> — খোঁজা, ফিল্টার, এডিট</figcaption></figure>
+<figure class="shot " data-img="12-product-create"><div class="bar"><span></span><span></span><span></span><em>/manager/products/create</em></div><img src="manual-img/12-product-create.jpg" alt="নতুন প্রোডাক্ট ফর্ম" loading="lazy"><figcaption><b>নতুন প্রোডাক্ট ফর্ম</b></figcaption></figure></div>
+
+  <div class="grid">
+    <div class="card"><h3 style="margin-top:0"><i class="fa-solid fa-tag" style="color:#8b5cf6"></i> ব্র্যান্ড</h3>প্রোডাক্ট → Brands থেকে ব্র্যান্ড যোগ/সম্পাদনা করুন। স্টোরের হোমপেজে ব্র্যান্ড সেকশনে দেখাবে।</div>
+    <div class="card"><h3 style="margin-top:0"><i class="fa-solid fa-barcode" style="color:#0ea5e9"></i> লেবেল প্রিন্ট</h3>প্রোডাক্ট তালিকা থেকে "Labels" চাপলে বারকোড/দামসহ স্টিকার প্রিন্ট করা যায় — POS-এ স্ক্যান করতে কাজে লাগে।</div>
+    <div class="card"><h3 style="margin-top:0"><i class="fa-solid fa-wand-magic-sparkles" style="color:#a855f7"></i> AI দিয়ে বিবরণ</h3>AI ফিচার চালু থাকলে প্রোডাক্টের বিবরণ ও SEO লেখা AI দিয়ে স্বয়ংক্রিয়ভাবে তৈরি করা যায়।</div>
+  </div>
+  
+<figure class="shot " data-img="13-brands"><div class="bar"><span></span><span></span><span></span><em>/manager/brands</em></div><img src="manual-img/13-brands.jpg" alt="ব্র্যান্ড ব্যবস্থাপনা" loading="lazy"><figcaption><b>ব্র্যান্ড</b> ব্যবস্থাপনা</figcaption></figure>
+<div class="note info"><b>ℹ️</b> ক্যাটাগরি তৈরি করেন সুপার অ্যাডমিন (সব দোকানের জন্য একই)। নতুন ক্যাটাগরি দরকার হলে অ্যাডমিনকে জানান।</div>
+</section>
+
+<!-- ================= ORDERS ================= -->
+<section id="orders" data-s>
+  <h2><span class="ic c3"><i class="fa-solid fa-receipt"></i></span>অর্ডার ব্যবস্থাপনা</h2>
+  <span class="path">অর্ডার <i class="fa-solid fa-chevron-right"></i> Manage Orders</span>
+  <p class="lead">মেনুতে লাল ব্যাজে নতুন অর্ডারের সংখ্যা দেখায়। অর্ডারে ক্লিক করলে বিস্তারিত, ক্রেতার তথ্য ও স্ট্যাটাস ইতিহাস দেখা যায়।</p>
+  <div class="card">
+    <h3 style="margin-top:0">অর্ডারের সাধারণ যাত্রাপথ</h3>
+    <div class="flow">
+      <span class="st c1">New</span><span class="ar">➜</span><span class="st c4">Confirmed</span><span class="ar">➜</span><span class="st c6">Processing</span><span class="ar">➜</span><span class="st c10">Packed</span><span class="ar">➜</span><span class="st c9">Shipped</span><span class="ar">➜</span><span class="st c3">On the way</span><span class="ar">➜</span><span class="st c2">Delivered</span>
+    </div>
+    <p>অন্যান্য স্ট্যাটাস: <b>Pending, Ready to ship, Completed, Cancelled, Returned, Refunded, Failed</b>। Cancelled বা Failed করলে প্রোডাক্টের স্টক নিজে থেকে ফেরত যায়।</p>
+    <h3>পেমেন্ট স্ট্যাটাস</h3>
+    <p style="margin:0">Unpaid · Pending verification (ক্রেতা bKash/Nagad নম্বর দিয়েছে, আপনি যাচাই করবেন) · Paid · Partially refunded · Refunded · Failed</p>
+  </div>
+  
+<div class="shots2">
+<figure class="shot " data-img="14-orders"><div class="bar"><span></span><span></span><span></span><em>/manager/orders</em></div><img src="manual-img/14-orders.jpg" alt="অর্ডার তালিকা — স্ট্যাটাস অনুযায়ী ফিল্টার" loading="lazy"><figcaption><b>অর্ডার তালিকা</b> — স্ট্যাটাস অনুযায়ী ফিল্টার</figcaption></figure>
+<figure class="shot " data-img="14b-order-detail"><div class="bar"><span></span><span></span><span></span><em>/manager/orders/…</em></div><img src="manual-img/14b-order-detail.jpg" alt="অর্ডারের বিস্তারিত — স্ট্যাটাস পরিবর্তন, প্রিন্ট, কুরিয়ার" loading="lazy"><figcaption><b>অর্ডারের বিস্তারিত</b> — স্ট্যাটাস পরিবর্তন, প্রিন্ট, কুরিয়ার</figcaption></figure></div>
+<div class="grid">
+    <div class="card"><h3 style="margin-top:0">✅ কনফার্ম করা</h3>নতুন অর্ডার খুলে ক্রেতাকে ফোন করে নিশ্চিত হয়ে স্ট্যাটাস "Confirmed" করুন। ক্রেতা SMS নোটিফিকেশন পাবেন (SMS চালু থাকলে)।</div>
+    <div class="card"><h3 style="margin-top:0">🖨️ প্রিন্ট</h3>অর্ডার পেজ থেকে ইনভয়েস বা প্যাকিং স্লিপ প্রিন্ট করুন।</div>
+    <div class="card"><h3 style="margin-top:0">📤 এক্সপোর্ট</h3>অর্ডার তালিকা CSV/Excel-এ ডাউনলোড করে রাখা যায়।</div>
+  </div>
+</section>
+
+<!-- ================= COURIER ================= -->
+<section id="courier" data-s>
+  <h2><span class="ic c4"><i class="fa-solid fa-truck-fast"></i></span>কুরিয়ার ও শিপমেন্ট</h2>
+  <span class="path">অর্ডার <i class="fa-solid fa-chevron-right"></i> Courier &amp; Shipments</span>
+  <div class="card">
+    <p style="margin-top:0"><b>Steadfast, Pathao, RedX</b> কুরিয়ারের সাথে সরাসরি যুক্ত। একবার API কী সেট করলে প্যানেল থেকেই পার্সেল বুক হবে, কনসাইনমেন্ট নম্বর ও ট্র্যাকিং স্ট্যাটাস নিজে থেকে আপডেট হবে।</p>
+    <ol class="steps">
+      <li><b>কুরিয়ার সেটআপ</b>Courier Settings-এ আপনার কুরিয়ার অ্যাকাউন্টের API Key / Secret দিন।</li>
+      <li><b>পার্সেল পাঠান</b>অর্ডার খুলে কুরিয়ার বেছে "Send to courier" চাপুন। একসাথে অনেক অর্ডারও পাঠানো যায়।</li>
+      <li><b>ট্র্যাক করুন</b>Shipments পেজে সব পার্সেলের অবস্থা দেখুন। ক্রেতাও স্টোরের "Track" পেজে দেখতে পাবেন।</li>
+    </ol>
+    
+<div class="shots2">
+<figure class="shot " data-img="15-shipments"><div class="bar"><span></span><span></span><span></span><em>/manager/shipments</em></div><img src="manual-img/15-shipments.jpg" alt="শিপমেন্ট — সব পার্সেলের অবস্থা" loading="lazy"><figcaption><b>শিপমেন্ট</b> — সব পার্সেলের অবস্থা</figcaption></figure>
+<figure class="shot " data-img="16-courier-settings"><div class="bar"><span></span><span></span><span></span><em>/manager/settings/courier</em></div><img src="manual-img/16-courier-settings.jpg" alt="কুরিয়ার সেটিংস — API কী (ছবিতে ঢাকা)" loading="lazy"><figcaption><b>কুরিয়ার সেটিংস</b> — API কী (ছবিতে ঢাকা)</figcaption></figure></div>
+<div class="note warn"><b>⚠️ Fraud Check:</b> অর্ডার কনফার্মের আগে ক্রেতার ফোন নম্বর দিয়ে "Fraud check" করুন — আগে কতবার পার্সেল ফেরত দিয়েছে তা দেখাবে। ভুয়া অর্ডারে খরচ বাঁচবে।</div>
+  </div>
+</section>
+
+<!-- ================= RETURNS ================= -->
+<section id="returns" data-s>
+  <h2><span class="ic c5"><i class="fa-solid fa-rotate-left"></i></span>রিটার্ন ও রিফান্ড</h2>
+  <div class="card">
+    ক্রেতা তার অ্যাকাউন্ট থেকে রিটার্ন রিকোয়েস্ট পাঠালে এখানে আসবে। রিকোয়েস্ট খুলে <b>Approve</b> বা <b>Reject</b> করুন। অনুমোদিত হলে টাকা ক্রেতার <b>ওয়ালেটে</b> বা অন্য পদ্ধতিতে ফেরত দেওয়া যায় এবং প্রয়োজনে স্টক ফেরত যায়।
+  </div>
+<figure class="shot " data-img="17-returns"><div class="bar"><span></span><span></span><span></span><em>/manager/returns</em></div><img src="manual-img/17-returns.jpg" alt="রিটার্ন ও রিফান্ড তালিকা" loading="lazy"><figcaption><b>রিটার্ন ও রিফান্ড</b> তালিকা</figcaption></figure>
+
+</section>
+
+<!-- ================= POS ================= -->
+<section id="pos" data-s>
+  <h2><span class="ic c2"><i class="fa-solid fa-cash-register"></i></span>POS — দোকানে সরাসরি বিক্রি</h2>
+  <p class="lead">কাউন্টারে বসে দ্রুত বিক্রির জন্য। অনলাইন ও অফলাইন বিক্রির স্টক একসাথে মিলে থাকে।</p>
+  <div class="card">
+  <ol class="steps">
+    <li><b>সেশন খুলুন</b>POS-এ ঢুকে ক্যাশ ড্রয়ারে কত টাকা আছে (Opening cash) লিখে সেশন শুরু করুন।</li>
+    <li><b>প্রোডাক্ট যোগ করুন</b>নাম লিখে খুঁজুন অথবা বারকোড স্ক্যানার দিয়ে স্ক্যান করুন। পরিমাণ ও ডিসকাউন্ট পরিবর্তন করা যায়।</li>
+    <li><b>কাস্টমার বাছুন</b>পুরনো কাস্টমার খুঁজুন বা নতুন যোগ করুন (ঐচ্ছিক — walk-in বিক্রিও করা যায়)।</li>
+    <li><b>পেমেন্ট নিন</b>Cash, Card, bKash, Nagad, Rocket বা একাধিক পদ্ধতি মিলিয়ে। ফেরত টাকা নিজে থেকে হিসাব হয়।</li>
+    <li><b>রসিদ প্রিন্ট</b>থার্মাল প্রিন্টারে রসিদ প্রিন্ট হবে।</li>
+    <li><b>দিন শেষে সেশন বন্ধ</b>"Close" চাপুন, ড্রয়ারের আসল টাকা গুনে লিখুন — সিস্টেম কম/বেশি দেখাবে।</li>
+  </ol>
+  </div>
+  
+<figure class="shot " data-img="18-pos"><div class="bar"><span></span><span></span><span></span><em>/manager/pos</em></div><img src="manual-img/18-pos.jpg" alt="POS স্ক্রিন — বামে বারকোড/সার্চ ও কার্ট, ডানে কাস্টমার, ডিসকাউন্ট ও পেমেন্ট" loading="lazy"><figcaption><b>POS স্ক্রিন</b> — বামে বারকোড/সার্চ ও কার্ট, ডানে কাস্টমার, ডিসকাউন্ট ও পেমেন্ট</figcaption></figure>
+<figure class="shot " data-img="19-pos-sessions"><div class="bar"><span></span><span></span><span></span><em>/manager/pos/sessions</em></div><img src="manual-img/19-pos-sessions.jpg" alt="সেশন / দৈনিক ক্লোজিং — প্রতিদিনের ক্যাশ হিসাব" loading="lazy"><figcaption><b>সেশন / দৈনিক ক্লোজিং</b> — প্রতিদিনের ক্যাশ হিসাব</figcaption></figure>
+<div class="grid">
+    <div class="card"><h3 style="margin-top:0">⏸️ Hold</h3>একজন ক্রেতার বিল আটকে রেখে অন্যজনের বিল করুন, পরে Holds থেকে ফিরিয়ে আনুন।</div>
+    <div class="card"><h3 style="margin-top:0">↩️ POS রিটার্ন</h3>দোকানে ফেরত আসা পণ্য — অনুমতিপ্রাপ্ত ব্যক্তি অনুমোদন দেন।</div>
+    <div class="card"><h3 style="margin-top:0">📜 সেশন ইতিহাস</h3>আগের সব সেশনের বিক্রি ও ক্যাশ হিসাব Sessions থেকে দেখুন।</div>
+  </div>
+</section>
+
+<!-- ================= INVENTORY ================= -->
+<section id="inventory" data-s>
+  <h2><span class="ic c6"><i class="fa-solid fa-warehouse"></i></span>ইনভেন্টরি, ক্রয় ও সাপ্লায়ার</h2>
+  <div class="card mod"><div class="ic c6"><i class="fa-solid fa-cubes"></i></div><div>
+    <h3>স্টক ও গুদাম (Stock &amp; Warehouses)</h3>
+    <ul>
+      <li><b>Warehouses:</b> একাধিক গুদাম/শাখা যোগ করুন। প্রতিটির আলাদা স্টক থাকে।</li>
+      <li><b>Stock:</b> কোন প্রোডাক্ট কোথায় কত আছে।</li>
+      <li><b>Ledger:</b> প্রতিটি স্টক আসা-যাওয়ার পূর্ণ ইতিহাস।</li>
+      <li><b>Adjustments:</b> নষ্ট, হারানো বা গণনায় পার্থক্য হলে স্টক ঠিক করুন।</li>
+      <li><b>Transfers:</b> এক গুদাম থেকে অন্য গুদামে মাল পাঠান।</li>
+    </ul>
+  </div></div>
+  
+<div class="shots2">
+<figure class="shot " data-img="20-inventory-stock"><div class="bar"><span></span><span></span><span></span><em>/manager/inventory</em></div><img src="manual-img/20-inventory-stock.jpg" alt="স্টক — কোথায় কত আছে" loading="lazy"><figcaption><b>স্টক</b> — কোথায় কত আছে</figcaption></figure>
+<figure class="shot " data-img="21-warehouses"><div class="bar"><span></span><span></span><span></span><em>/manager/warehouses</em></div><img src="manual-img/21-warehouses.jpg" alt="গুদাম তালিকা" loading="lazy"><figcaption><b>গুদাম</b> তালিকা</figcaption></figure></div>
+<div class="card mod"><div class="ic c9"><i class="fa-solid fa-truck-ramp-box"></i></div><div>
+    <h3>ক্রয় (Purchases)</h3>
+    সাপ্লায়ার থেকে মাল কিনলে "নতুন ক্রয়" করুন — প্রোডাক্ট, পরিমাণ ও দাম দিন। সেভ করলে স্টক নিজে থেকে বাড়বে, এবং সাপ্লায়ারের কাছে বাকি হিসাব হবে। ফেরত দিলে Purchase Return করুন।
+  </div></div>
+  
+<figure class="shot " data-img="22-purchases"><div class="bar"><span></span><span></span><span></span><em>/manager/purchases</em></div><img src="manual-img/22-purchases.jpg" alt="ক্রয়ের তালিকা" loading="lazy"><figcaption><b>ক্রয়ের তালিকা</b></figcaption></figure>
+<div class="card mod"><div class="ic c8"><i class="fa-solid fa-handshake"></i></div><div>
+    <h3>সাপ্লায়ার</h3>
+    সাপ্লায়ারের তালিকা, প্রত্যেকের মোট ক্রয়, পরিশোধ ও বাকি। সাপ্লায়ারের পেজ থেকে পেমেন্ট দিন।
+  </div></div>
+<figure class="shot " data-img="23-suppliers"><div class="bar"><span></span><span></span><span></span><em>/manager/suppliers</em></div><img src="manual-img/23-suppliers.jpg" alt="সাপ্লায়ার ও তাদের বাকি" loading="lazy"><figcaption><b>সাপ্লায়ার</b> ও তাদের বাকি</figcaption></figure>
+
+</section>
+
+<!-- ================= CUSTOMERS ================= -->
+<section id="customers" data-s>
+  <h2><span class="ic c7"><i class="fa-solid fa-users"></i></span>কাস্টমার (CRM)</h2>
+  <div class="card">
+    সব ক্রেতার তালিকা — নাম, ফোন, মোট অর্ডার ও খরচ। কাস্টমারে ক্লিক করলে তার সব অর্ডার, ঠিকানা ও <b>ওয়ালেট ব্যালেন্স</b> দেখা যায়। এখান থেকে ওয়ালেটে টাকা যোগ/কর্তন করা যায় এবং তালিকা এক্সপোর্ট করা যায়।
+  </div>
+<figure class="shot " data-img="24-customers"><div class="bar"><span></span><span></span><span></span><em>/manager/customers</em></div><img src="manual-img/24-customers.jpg" alt="কাস্টমার তালিকা (CRM)" loading="lazy"><figcaption><b>কাস্টমার তালিকা (CRM)</b></figcaption></figure>
+
+</section>
+
+<!-- ================= MARKETING ================= -->
+<section id="marketing" data-s>
+  <h2><span class="ic c5"><i class="fa-solid fa-bullhorn"></i></span>মার্কেটিং, কুপন ও রিভিউ</h2>
+  <div class="grid">
+    <div class="card"><h3 style="margin-top:0"><i class="fa-solid fa-comment-sms" style="color:#ef4444"></i> SMS / ইমেইল ক্যাম্পেইন</h3>
+      Marketing → নতুন ক্যাম্পেইন। কাদের পাঠাবেন (সব কাস্টমার / নির্দিষ্ট গ্রুপ) বেছে মেসেজ লিখুন, এখনই বা নির্দিষ্ট সময়ে পাঠান। <b>Logs</b> থেকে কে পেয়েছে দেখুন।</div>
+    <div class="card"><h3 style="margin-top:0"><i class="fa-solid fa-ticket" style="color:#f59e0b"></i> কুপন</h3>
+      কুপন কোড তৈরি করুন — শতাংশ বা নির্দিষ্ট টাকা ছাড়, সর্বনিম্ন অর্ডার, মেয়াদ, ব্যবহারের সীমা। ক্রেতা চেকআউটে কোড দিলে ছাড় পাবে।</div>
+    <div class="card"><h3 style="margin-top:0"><i class="fa-solid fa-star" style="color:#eab308"></i> রিভিউ</h3>
+      ক্রেতাদের দেওয়া রিভিউ দেখুন, অনুমোদন দিন বা লুকিয়ে রাখুন। অনুমোদিত রিভিউ প্রোডাক্ট পেজে দেখাবে।</div>
+  </div>
+  
+<figure class="shot " data-img="25-marketing"><div class="bar"><span></span><span></span><span></span><em>/manager/marketing</em></div><img src="manual-img/25-marketing.jpg" alt="মার্কেটিং ও SMS ক্যাম্পেইন" loading="lazy"><figcaption><b>মার্কেটিং ও SMS</b> ক্যাম্পেইন</figcaption></figure>
+<div class="shots2">
+<figure class="shot " data-img="26-coupons"><div class="bar"><span></span><span></span><span></span><em>/manager/coupons</em></div><img src="manual-img/26-coupons.jpg" alt="কুপন তৈরি ও তালিকা" loading="lazy"><figcaption><b>কুপন</b> তৈরি ও তালিকা</figcaption></figure>
+<figure class="shot " data-img="27-reviews"><div class="bar"><span></span><span></span><span></span><em>/manager/reviews</em></div><img src="manual-img/27-reviews.jpg" alt="রিভিউ অনুমোদন" loading="lazy"><figcaption><b>রিভিউ</b> অনুমোদন</figcaption></figure></div>
+<div class="note warn"><b>⚠️</b> প্রতিটি প্ল্যানে মাসিক SMS-এর সীমা আছে। সীমা শেষ হলে SMS যাবে না — প্ল্যান আপগ্রেড করুন।</div>
+</section>
+
+<!-- ================= WEBSITE ================= -->
+<section id="website" data-s>
+  <h2><span class="ic c8"><i class="fa-solid fa-globe"></i></span>ওয়েবসাইট, SEO ও ব্লগ</h2>
+  <span class="path">Website <i class="fa-solid fa-chevron-right"></i> Website &amp; SEO</span>
+  <div class="card mod"><div class="ic c8"><i class="fa-solid fa-paintbrush"></i></div><div>
+    <h3>হোমপেজ বিল্ডার</h3>
+    কোডিং ছাড়াই হোমপেজ সাজান। সেকশনগুলো যোগ, বন্ধ বা উপরে-নিচে সরানো যায়:
+    <div class="chips" style="margin-top:8px">
+      <span class="st c1">Hero</span><span class="st c7">Banners</span><span class="st c4">Categories</span><span class="st c5">Flash Sale</span><span class="st c2">New Arrivals</span><span class="st c9">Best Selling</span><span class="st c3">Featured</span><span class="st c10">Discounted</span><span class="st c6">Brands</span><span class="st c13">Reviews</span><span class="st c8">Blog</span><span class="st c11">Stats</span><span class="st c12">Text / Image</span>
+    </div>
+  </div></div>
+
+<figure class="shot " data-img="28-website-builder"><div class="bar"><span></span><span></span><span></span><em>/manager/website/homepage</em></div><img src="manual-img/28-website-builder.jpg" alt="হোমপেজ বিল্ডার — সেকশন চালু/বন্ধ ও সাজানো" loading="lazy"><figcaption><b>হোমপেজ বিল্ডার</b> — সেকশন চালু/বন্ধ ও সাজানো</figcaption></figure>
+  <div class="grid">
+    <div class="card"><h3 style="margin-top:0">🎨 থিম</h3>স্টোরের রং ও ডিজাইন বাছাই করুন।</div>
+    <div class="card"><h3 style="margin-top:0">🖼️ স্লাইডার</h3>হোমপেজের উপরের বড় ব্যানার ছবি ও লিংক।</div>
+    <div class="card"><h3 style="margin-top:0">📄 পেজ</h3>About Us, Privacy Policy, Return Policy ইত্যাদি নিজস্ব পেজ।</div>
+    <div class="card"><h3 style="margin-top:0">🔍 SEO</h3>স্টোরের টাইটেল, বিবরণ, সোশ্যাল শেয়ার ছবি। sitemap.xml নিজে থেকে তৈরি হয়।</div>
+    <div class="card"><h3 style="margin-top:0">🌐 কাস্টম ডোমেইন</h3>নিজের ডোমেইন (যেমন <code>myshop.com</code>) যুক্ত করুন। নির্দেশনা অনুযায়ী DNS সেট করে "Verify" চাপুন।</div>
+    <div class="card"><h3 style="margin-top:0">✍️ ব্লগ</h3>লেখা প্রকাশ করে গুগলে ভিজিটর আনুন। ক্যাটাগরি, ছবি ও SEO সহ।</div>
+  </div>
+  
+<div class="shots2">
+<figure class="shot " data-img="29-website-theme"><div class="bar"><span></span><span></span><span></span><em>/manager/website/theme</em></div><img src="manual-img/29-website-theme.jpg" alt="থিম" loading="lazy"><figcaption><b>থিম</b></figcaption></figure>
+<figure class="shot " data-img="30-sliders"><div class="bar"><span></span><span></span><span></span><em>/manager/sliders</em></div><img src="manual-img/30-sliders.jpg" alt="স্লাইডার" loading="lazy"><figcaption><b>স্লাইডার</b></figcaption></figure></div>
+<div class="shots2">
+<figure class="shot " data-img="32-seo"><div class="bar"><span></span><span></span><span></span><em>/manager/website/seo</em></div><img src="manual-img/32-seo.jpg" alt="SEO সেটিংস" loading="lazy"><figcaption><b>SEO সেটিংস</b></figcaption></figure>
+<figure class="shot " data-img="33-domains"><div class="bar"><span></span><span></span><span></span><em>/manager/domains</em></div><img src="manual-img/33-domains.jpg" alt="কাস্টম ডোমেইন" loading="lazy"><figcaption><b>কাস্টম ডোমেইন</b></figcaption></figure></div>
+<div class="shots2">
+<figure class="shot " data-img="31-pages"><div class="bar"><span></span><span></span><span></span><em>/manager/pages</em></div><img src="manual-img/31-pages.jpg" alt="পেজ (About, Policy…)" loading="lazy"><figcaption><b>পেজ</b> (About, Policy…)</figcaption></figure>
+<figure class="shot " data-img="34-blog"><div class="bar"><span></span><span></span><span></span><em>/manager/blog</em></div><img src="manual-img/34-blog.jpg" alt="ব্লগ" loading="lazy"><figcaption><b>ব্লগ</b></figcaption></figure></div>
+<div class="note tip"><b>💡</b> মেনুর <b>View Store</b> চাপলে নতুন ট্যাবে আপনার স্টোর খুলবে — পরিবর্তন দেখে নিন।</div>
+</section>
+
+<!-- ================= REPORTS ================= -->
+<section id="reports" data-s>
+  <h2><span class="ic c9"><i class="fa-solid fa-chart-pie"></i></span>রিপোর্ট ও AI অ্যাসিস্ট্যান্ট</h2>
+  <div class="tbl"><table>
+    <tr><th>রিপোর্ট</th><th>কী জানা যায়</th></tr>
+    <tr><td>📈 Sales</td><td>তারিখ অনুযায়ী বিক্রি, অর্ডার সংখ্যা, গড় অর্ডার</td></tr>
+    <tr><td>📦 Products</td><td>কোন প্রোডাক্ট বেশি/কম বিক্রি হচ্ছে</td></tr>
+    <tr><td>👥 Customers</td><td>সেরা ক্রেতা ও তাদের কেনাকাটা</td></tr>
+    <tr><td>🧾 Tax</td><td>ভ্যাট/ট্যাক্স সংগ্রহের হিসাব</td></tr>
+    <tr><td>💸 Dues</td><td>কার কাছে কত বাকি</td></tr>
+    <tr><td>💰 Profit &amp; Loss</td><td>আয়, খরচ ও প্রকৃত লাভ (Accounting ফিচারে)</td></tr>
+    <tr><td>🚚 Purchases</td><td>ক্রয়ের সারাংশ</td></tr>
+  </table></div>
+
+<div class="shots2">
+<figure class="shot " data-img="35-reports"><div class="bar"><span></span><span></span><span></span><em>/manager/reports</em></div><img src="manual-img/35-reports.jpg" alt="রিপোর্ট মেনু" loading="lazy"><figcaption><b>রিপোর্ট</b> মেনু</figcaption></figure>
+<figure class="shot " data-img="36-report-sales"><div class="bar"><span></span><span></span><span></span><em>/manager/reports/sales</em></div><img src="manual-img/36-report-sales.jpg" alt="সেলস রিপোর্ট" loading="lazy"><figcaption><b>সেলস রিপোর্ট</b></figcaption></figure></div>
+  <div class="card mod" style="margin-top:16px"><div class="ic c10"><i class="fa-solid fa-wand-magic-sparkles"></i></div><div>
+    <h3>AI Assistant</h3>
+    আপনার বিক্রির ডেটা বিশ্লেষণ করে পরামর্শ দেয় (কোন পণ্যে জোর দেবেন, কখন বিক্রি বেশি), প্রোডাক্ট বিবরণ লেখে, এবং স্টোরে ক্রেতাদের প্রশ্নের উত্তর দিতে চ্যাটবট হিসেবে কাজ করে। প্ল্যান অনুযায়ী মাসিক AI রিকোয়েস্টের সীমা থাকে।
+  </div></div>
+<figure class="shot " data-img="37-ai"><div class="bar"><span></span><span></span><span></span><em>/manager/ai/insights</em></div><img src="manual-img/37-ai.jpg" alt="AI Assistant — ব্যবসার পরামর্শ" loading="lazy"><figcaption><b>AI Assistant</b> — ব্যবসার পরামর্শ</figcaption></figure>
+
+</section>
+
+<!-- ================= ACCOUNTS ================= -->
+<section id="accounts" data-s>
+  <h2><span class="ic c11"><i class="fa-solid fa-scale-balanced"></i></span>হিসাব ও খরচ</h2>
+  <div class="grid">
+    <div class="card"><h3 style="margin-top:0">🏦 Accounts</h3>ক্যাশ, ব্যাংক, bKash ইত্যাদি অ্যাকাউন্ট ও তাদের ব্যালেন্স।</div>
+    <div class="card"><h3 style="margin-top:0">📒 Cashbook</h3>দৈনিক টাকা আসা-যাওয়ার খাতা।</div>
+    <div class="card"><h3 style="margin-top:0">🔁 Transfers</h3>এক অ্যাকাউন্ট থেকে অন্যটিতে টাকা স্থানান্তর।</div>
+    <div class="card"><h3 style="margin-top:0">🧾 Vouchers</h3>ভাড়া, বিদ্যুৎ বিল, বেতন ইত্যাদি খরচ বা অন্যান্য আয় এন্ট্রি দিন।</div>
+  </div>
+  
+<div class="shots2">
+<figure class="shot " data-img="38-accounts"><div class="bar"><span></span><span></span><span></span><em>/manager/accounts</em></div><img src="manual-img/38-accounts.jpg" alt="অ্যাকাউন্টস ও ব্যালেন্স" loading="lazy"><figcaption><b>অ্যাকাউন্টস</b> ও ব্যালেন্স</figcaption></figure>
+<figure class="shot " data-img="39-vouchers"><div class="bar"><span></span><span></span><span></span><em>/manager/vouchers</em></div><img src="manual-img/39-vouchers.jpg" alt="ভাউচার — খরচ/আয় এন্ট্রি" loading="lazy"><figcaption><b>ভাউচার</b> — খরচ/আয় এন্ট্রি</figcaption></figure></div>
+<div class="note info"><b>ℹ️</b> অর্ডার ও POS বিক্রি, ক্রয় এবং সাপ্লায়ার পেমেন্ট স্বয়ংক্রিয়ভাবে হিসাবে যোগ হয় — আলাদা করে লিখতে হয় না।</div>
+</section>
+
+<!-- ================= HR ================= -->
+<section id="hr" data-s>
+  <h2><span class="ic c10"><i class="fa-solid fa-id-card-clip"></i></span>HR, স্টাফ ও রোল</h2>
+  <div class="card mod"><div class="ic c1"><i class="fa-solid fa-users-gear"></i></div><div>
+    <h3>স্টাফ ও রোল (পারমিশন)</h3>
+    <ol>
+      <li><b>Roles</b> এ গিয়ে রোল বানান (যেমন "Sales Man", "Store Keeper")।</li>
+      <li>প্রতিটি রোলে কোন মডিউলে <b>দেখা / যোগ / এডিট / ডিলিট / প্রিন্ট</b> করা যাবে তা টিক দিন।</li>
+      <li><b>Staff</b> এ নতুন স্টাফ যোগ করে রোল দিন। স্টাফ একই <code>/login</code> পেজ দিয়ে ঢুকবেন এবং শুধু অনুমোদিত মেনু দেখবেন।</li>
+    </ol>
+  </div></div>
+
+<div class="shots2">
+<figure class="shot " data-img="42-staff"><div class="bar"><span></span><span></span><span></span><em>/manager/staff</em></div><img src="manual-img/42-staff.jpg" alt="স্টাফ তালিকা" loading="lazy"><figcaption><b>স্টাফ</b> তালিকা</figcaption></figure>
+<figure class="shot " data-img="43-roles"><div class="bar"><span></span><span></span><span></span><em>/manager/roles</em></div><img src="manual-img/43-roles.jpg" alt="রোল ও পারমিশন" loading="lazy"><figcaption><b>রোল ও পারমিশন</b></figcaption></figure></div>
+  <div class="card mod"><div class="ic c10"><i class="fa-solid fa-user-clock"></i></div><div>
+    <h3>HRM ও বেতন (Payroll)</h3>
+    <ul>
+      <li><b>Employees:</b> কর্মচারীর তথ্য ও মূল বেতন।</li>
+      <li><b>Attendance:</b> প্রতিদিনের হাজিরা ও মাসিক হাজিরা রিপোর্ট।</li>
+      <li><b>Leaves:</b> ছুটির আবেদন অনুমোদন/বাতিল।</li>
+      <li><b>Payroll:</b> মাস শেষে বেতন শিট তৈরি করুন, প্রত্যেকের <b>পে-স্লিপ</b> প্রিন্ট করুন।</li>
+    </ul>
+  </div></div>
+<div class="shots2">
+<figure class="shot " data-img="40-hrm"><div class="bar"><span></span><span></span><span></span><em>/manager/hrm/employees</em></div><img src="manual-img/40-hrm.jpg" alt="কর্মচারী" loading="lazy"><figcaption><b>কর্মচারী</b></figcaption></figure>
+<figure class="shot " data-img="41-payroll"><div class="bar"><span></span><span></span><span></span><em>/manager/hrm/payroll</em></div><img src="manual-img/41-payroll.jpg" alt="বেতন (Payroll)" loading="lazy"><figcaption><b>বেতন (Payroll)</b></figcaption></figure></div>
+
+</section>
+
+<!-- ================= SETTINGS ================= -->
+<section id="settings" data-s>
+  <h2><span class="ic c12"><i class="fa-solid fa-gear"></i></span>সেটিংস ও সাবস্ক্রিপশন</h2>
+  <div class="card mod"><div class="ic c12"><i class="fa-solid fa-sliders"></i></div><div>
+    <h3>সাধারণ সেটিংস</h3>
+    <ul>
+      <li><b>দোকানের তথ্য:</b> নাম, ফোন, ইমেইল, ঠিকানা, About, খোলার সময়, গুগল ম্যাপ, ফেসবুক লিংক।</li>
+      <li><b>লোগো, ফেভিকন, ব্যানার</b> ও হোমপেজের শিরোনাম।</li>
+      <li><b>ডেলিভারি চার্জ</b> ও <b>ট্যাক্স %</b>।</li>
+      <li><b>পেমেন্ট পদ্ধতি:</b> ক্যাশ অন ডেলিভারি চালু/বন্ধ, ShatajPay, bKash ও Nagad নম্বর।</li>
+      <li><b>পাসওয়ার্ড পরিবর্তন।</b></li>
+    </ul>
+  </div></div>
+<figure class="shot " data-img="44-settings"><div class="bar"><span></span><span></span><span></span><em>/manager/settings</em></div><img src="manual-img/44-settings.jpg" alt="দোকানের সেটিংস" loading="lazy"><figcaption><b>দোকানের সেটিংস</b></figcaption></figure>
+
+  <div class="grid">
+    <div class="card"><h3 style="margin-top:0"><i class="fa-solid fa-credit-card" style="color:#16a34a"></i> সাবস্ক্রিপশন</h3>বর্তমান প্ল্যান, মেয়াদ, ব্যবহারের সীমা দেখুন; প্ল্যান আপগ্রেড বা নবায়ন করুন; ইনভয়েস ডাউনলোড করুন।</div>
+    <div class="card"><h3 style="margin-top:0"><i class="fa-solid fa-shield-halved" style="color:#ef4444"></i> Security (2FA)</h3>দুই-ধাপ যাচাই চালু করুন — পাসওয়ার্ডের পাশাপাশি অথেনটিকেটর অ্যাপের কোড লাগবে। অ্যাকাউন্ট অনেক বেশি নিরাপদ হয়।</div>
+    <div class="card"><h3 style="margin-top:0"><i class="fa-solid fa-code" style="color:#0ea5e9"></i> REST API</h3>অন্য সফটওয়্যার বা মোবাইল অ্যাপের সাথে যুক্ত করতে API টোকেন ও Webhook তৈরি করুন (ডেভেলপারদের জন্য)।</div>
+    <div class="card"><h3 style="margin-top:0"><i class="fa-solid fa-clock-rotate-left" style="color:#f59e0b"></i> Activity Log</h3>কে কখন কী পরিবর্তন করেছে তার সম্পূর্ণ রেকর্ড।</div>
+  </div>
+  
+<div class="shots2">
+<figure class="shot " data-img="45-billing"><div class="bar"><span></span><span></span><span></span><em>/manager/billing</em></div><img src="manual-img/45-billing.jpg" alt="সাবস্ক্রিপশন — বর্তমান প্ল্যান ও ব্যবহার" loading="lazy"><figcaption><b>সাবস্ক্রিপশন</b> — বর্তমান প্ল্যান ও ব্যবহার</figcaption></figure>
+<figure class="shot " data-img="46-billing-plans"><div class="bar"><span></span><span></span><span></span><em>/manager/billing/plans</em></div><img src="manual-img/46-billing-plans.jpg" alt="প্ল্যান আপগ্রেড" loading="lazy"><figcaption><b>প্ল্যান আপগ্রেড</b></figcaption></figure></div>
+<div class="shots2">
+<figure class="shot " data-img="47-security"><div class="bar"><span></span><span></span><span></span><em>/manager/security</em></div><img src="manual-img/47-security.jpg" alt="2FA নিরাপত্তা" loading="lazy"><figcaption><b>2FA নিরাপত্তা</b></figcaption></figure>
+<figure class="shot " data-img="48-api"><div class="bar"><span></span><span></span><span></span><em>/manager/api</em></div><img src="manual-img/48-api.jpg" alt="REST API (টোকেন ঢাকা)" loading="lazy"><figcaption><b>REST API</b> (টোকেন ঢাকা)</figcaption></figure></div>
+<figure class="shot " data-img="49-activity"><div class="bar"><span></span><span></span><span></span><em>/manager/activity</em></div><img src="manual-img/49-activity.jpg" alt="অ্যাক্টিভিটি লগ" loading="lazy"><figcaption><b>অ্যাক্টিভিটি লগ</b></figcaption></figure>
+<div class="note warn"><b>⚠️ মেয়াদ শেষ হলে কী হয়?</b> প্রথমে কিছুদিন <b>Grace period</b> চলে (সব কাজ করা যায়, সতর্কবার্তা দেখায়)। এরপর অ্যাকাউন্ট <b>Read-only</b> হয়ে যায় — দেখা যাবে, কিন্তু নতুন কিছু যোগ বা পরিবর্তন করা যাবে না। নবায়ন করলেই সাথে সাথে সব চালু।</div>
+</section>
+
+<!-- ================= STOREFRONT ================= -->
+<section id="store" data-s>
+  <h2><span class="ic c9"><i class="fa-solid fa-bag-shopping"></i></span>ক্রেতার জন্য গাইড (অনলাইন স্টোর)</h2>
+  <p class="lead">এই অংশটি আপনার ক্রেতাদের সাথে শেয়ার করতে পারেন। উদাহরণ হিসেবে <b>“আপন হাট”</b> দোকানে (<code>/aponhat</code>) একজন ক্রেতা লগইন করে একটি অর্ডার দিয়েছেন — নিচে প্রতিটি ধাপের আসল স্ক্রিনশট।</p>
+
+  <h3>ধাপ ১ — দোকানে ঢুকুন ও পণ্য দেখুন</h3>
+  <p>দোকানের লিংক খুলুন (যেমন <code>127.0.0.1:8000/aponhat</code>)। হোমপেজে ক্যাটাগরি মেনু, সার্চ বক্স, অফার ও নতুন পণ্য দেখা যাবে।</p>
+  <figure class="shot" data-img="60-store-home"><div class="bar"><span></span><span></span><span></span><em>/aponhat</em></div><img src="manual-img/60-store-home.jpg" alt="দোকানের হোমপেজ" loading="lazy"><figcaption><b>দোকানের হোমপেজ</b> — উপরে সার্চ, লগইন/রেজিস্টার, উইশলিস্ট ও কার্ট</figcaption></figure>
+  <div class="shots2">
+  <figure class="shot" data-img="61-store-products"><div class="bar"><span></span><span></span><span></span><em>/aponhat/products</em></div><img src="manual-img/61-store-products.jpg" alt="পণ্যের তালিকা" loading="lazy"><figcaption><b>সব পণ্য</b> — ক্যাটাগরি ও দাম দিয়ে ফিল্টার</figcaption></figure>
+  <figure class="shot" data-img="62-store-product"><div class="bar"><span></span><span></span><span></span><em>/aponhat/product/…</em></div><img src="manual-img/62-store-product.jpg" alt="পণ্যের বিস্তারিত" loading="lazy"><figcaption><b>পণ্যের পেজ</b> — ছবি, দাম, সাইজ/রং, <b>Add to Cart</b> ও <b>Wishlist</b></figcaption></figure>
+  </div>
+
+  <h3>ধাপ ২ — লগইন / রেজিস্টার</h3>
+  <p>উপরের <b>“লগইন”</b> বাটনে চাপুন। মোবাইল নম্বর বা ইমেইল এবং পাসওয়ার্ড দিন। অ্যাকাউন্ট না থাকলে <b>“রেজিস্টার”</b> করুন। (লগইন ছাড়াও অর্ডার করা যায়, তবে লগইন করলে অর্ডার ইতিহাস ও ঠিকানা সংরক্ষিত থাকে।)</p>
+  <div class="shots2">
+  <figure class="shot" data-img="66-store-account-login"><div class="bar"><span></span><span></span><span></span><em>/aponhat/account/login</em></div><img src="manual-img/66-store-account-login.jpg" alt="ক্রেতার লগইন" loading="lazy"><figcaption><b>ক্রেতার লগইন পেজ</b></figcaption></figure>
+  <figure class="shot" data-img="70-cust-dashboard"><div class="bar"><span></span><span></span><span></span><em>/aponhat/account</em></div><img src="manual-img/70-cust-dashboard.jpg" alt="আমার অ্যাকাউন্ট" loading="lazy"><figcaption><b>লগইনের পর — “আমার অ্যাকাউন্ট”</b></figcaption></figure>
+  </div>
+
+  <h3>ধাপ ৩ — কার্টে যোগ ও চেকআউট</h3>
+  <p>পছন্দের পণ্যে <b>Add to Cart</b> চাপুন। কার্টে পরিমাণ বাড়ানো/কমানো ও কুপন কোড দেওয়া যায়। তারপর <b>চেকআউট</b>-এ নাম, ফোন, ঠিকানা দিন (লগইন থাকলে নিজে থেকে বসে যায়) এবং পেমেন্ট পদ্ধতি বাছুন।</p>
+  <div class="shots2">
+  <figure class="shot" data-img="71-cust-cart"><div class="bar"><span></span><span></span><span></span><em>/aponhat/cart</em></div><img src="manual-img/71-cust-cart.jpg" alt="কার্ট" loading="lazy"><figcaption><b>শপিং কার্ট</b> — পরিমাণ, কুপন ও মোট দাম</figcaption></figure>
+  <figure class="shot" data-img="72-cust-checkout"><div class="bar"><span></span><span></span><span></span><em>/aponhat/checkout</em></div><img src="manual-img/72-cust-checkout.jpg" alt="চেকআউট" loading="lazy"><figcaption><b>চেকআউট</b> — ঠিকানা ও পেমেন্ট পদ্ধতি (ক্যাশ অন ডেলিভারি / bKash / Nagad / ShatajPay)</figcaption></figure>
+  </div>
+
+  <h3>ধাপ ৪ — অর্ডার সম্পন্ন 🎉</h3>
+  <p>“অর্ডার করুন” চাপলে ধন্যবাদ পেজ আসবে। এখানে <b>অর্ডার নম্বর</b> থাকে — এটি সংরক্ষণ করুন, ট্র্যাক করতে লাগবে। ৭ ধাপের টাইমলাইনে অর্ডার কোথায় আছে দেখা যায়।</p>
+  <figure class="shot" data-img="73-cust-order-success"><div class="bar"><span></span><span></span><span></span><em>/aponhat/order/ORD-…</em></div><img src="manual-img/73-cust-order-success.jpg" alt="অর্ডার সফল" loading="lazy"><figcaption><b>অর্ডার সফল</b> — অর্ডার নম্বর, পণ্য, মোট টাকা, ডেলিভারি ঠিকানা ও লয়্যালটি পয়েন্ট</figcaption></figure>
+
+  <h3>ধাপ ৫ — অর্ডার ট্র্যাক ও অ্যাকাউন্ট</h3>
+  <div class="shots2">
+  <figure class="shot" data-img="74-cust-orders"><div class="bar"><span></span><span></span><span></span><em>/aponhat/account</em></div><img src="manual-img/74-cust-orders.jpg" alt="আমার অর্ডার" loading="lazy"><figcaption><b>আমার অর্ডারসমূহ</b></figcaption></figure>
+  <figure class="shot" data-img="75-cust-order-detail"><div class="bar"><span></span><span></span><span></span><em>/aponhat/account/orders/…</em></div><img src="manual-img/75-cust-order-detail.jpg" alt="অর্ডারের বিস্তারিত" loading="lazy"><figcaption><b>অর্ডারের বিস্তারিত ও স্ট্যাটাস</b></figcaption></figure>
+  <figure class="shot" data-img="65-store-track"><div class="bar"><span></span><span></span><span></span><em>/aponhat/track</em></div><img src="manual-img/65-store-track.jpg" alt="অর্ডার ট্র্যাক" loading="lazy"><figcaption><b>অর্ডার ট্র্যাক</b> — লগইন ছাড়াই অর্ডার নম্বর ও ফোন দিয়ে</figcaption></figure>
+  <figure class="shot" data-img="76-cust-profile"><div class="bar"><span></span><span></span><span></span><em>/aponhat/account/profile</em></div><img src="manual-img/76-cust-profile.jpg" alt="প্রোফাইল" loading="lazy"><figcaption><b>প্রোফাইল</b> — নাম, ফোন, পাসওয়ার্ড পরিবর্তন</figcaption></figure>
+  <figure class="shot" data-img="77-cust-addresses"><div class="bar"><span></span><span></span><span></span><em>/aponhat/account/addresses</em></div><img src="manual-img/77-cust-addresses.jpg" alt="ঠিকানা" loading="lazy"><figcaption><b>ঠিকানা বই</b> — একাধিক ঠিকানা সংরক্ষণ</figcaption></figure>
+  <figure class="shot" data-img="78-cust-wallet"><div class="bar"><span></span><span></span><span></span><em>/aponhat/account/wallet</em></div><img src="manual-img/78-cust-wallet.jpg" alt="ওয়ালেট" loading="lazy"><figcaption><b>ওয়ালেট</b> — রিফান্ড/ক্যাশব্যাকের ব্যালেন্স</figcaption></figure>
+  <figure class="shot" data-img="79-cust-returns"><div class="bar"><span></span><span></span><span></span><em>/aponhat/account/returns</em></div><img src="manual-img/79-cust-returns.jpg" alt="রিটার্ন" loading="lazy"><figcaption><b>রিটার্ন আবেদন</b></figcaption></figure>
+  <figure class="shot" data-img="79b-cust-wishlist"><div class="bar"><span></span><span></span><span></span><em>/aponhat/wishlist</em></div><img src="manual-img/79b-cust-wishlist.jpg" alt="উইশলিস্ট" loading="lazy"><figcaption><b>উইশলিস্ট</b> — পরে কেনার জন্য রাখা পণ্য</figcaption></figure>
+  </div>
+
+  <h3>📱 মোবাইলে দোকান</h3>
+  <figure class="shot phone" data-img="67-store-mobile"><div class="bar"><span></span><span></span><span></span><em>মোবাইল</em></div><img src="manual-img/67-store-mobile.jpg" alt="মোবাইলে দোকান" loading="lazy"><figcaption><b>মোবাইল ভিউ</b> — “PWA App” চাপলে অ্যাপের মতো ইনস্টল হয়</figcaption></figure>
+  <div class="grid">
+    <div class="card"><h3 style="margin-top:0">👤 আমার অ্যাকাউন্ট</h3>রেজিস্টার/লগইন করে সব অর্ডার, প্রোফাইল ও একাধিক ঠিকানা সংরক্ষণ করুন।</div>
+    <div class="card"><h3 style="margin-top:0">👛 ওয়ালেট</h3>রিফান্ড বা ক্যাশব্যাকের টাকা ওয়ালেটে জমা হয়, পরের কেনাকাটায় ব্যবহার করা যায়।</div>
+    <div class="card"><h3 style="margin-top:0">↩️ রিটার্ন</h3>অ্যাকাউন্ট → Returns থেকে কারণসহ ফেরতের আবেদন করুন।</div>
+    <div class="card"><h3 style="margin-top:0">💬 চ্যাট</h3>স্টোরের চ্যাট বাটন থেকে প্রশ্ন করুন (AI চ্যাটবট চালু থাকলে সাথে সাথে উত্তর)।</div>
+  </div>
+</section>
+
+<!-- ================= ADMIN ================= -->
+<section id="admin" data-s>
+  <h2><span class="ic c14"><i class="fa-solid fa-user-shield"></i></span>সুপার অ্যাডমিন প্যানেল</h2>
+  <p class="lead">শুধু প্ল্যাটফর্মের মালিকের জন্য — <code>/admin/login</code></p>
+<figure class="shot " data-img="80-admin-dashboard"><div class="bar"><span></span><span></span><span></span><em>/admin</em></div><img src="manual-img/80-admin-dashboard.jpg" alt="সুপার অ্যাডমিন ড্যাশবোর্ড" loading="lazy"><figcaption><b>সুপার অ্যাডমিন ড্যাশবোর্ড</b></figcaption></figure>
+
+  <div class="tbl"><table>
+    <tr><th>মেনু</th><th>কাজ</th></tr>
+    <tr><td>📊 Dashboard</td><td>মোট দোকান, আয়, সাবস্ক্রিপশন ও অর্ডারের সারাংশ</td></tr>
+    <tr><td>💳 Subscriptions / Invoices</td><td>কোন দোকানের কোন প্ল্যান, মেয়াদ, পেমেন্ট; ম্যানুয়ালি পেমেন্ট গ্রহণ বা মেয়াদ বাড়ানো</td></tr>
+    <tr><td>📦 Packages / Plans</td><td>প্ল্যান তৈরি — দাম (মাসিক/বার্ষিক/লাইফটাইম), সীমা (প্রোডাক্ট, অর্ডার, স্টাফ, SMS, স্টোরেজ…) ও কোন ফিচার থাকবে</td></tr>
+    <tr><td>💹 Commission</td><td>দোকানগুলোর বিক্রি থেকে প্ল্যাটফর্মের কমিশন হিসাব</td></tr>
+    <tr><td>🏪 Branches</td><td>সব দোকানের তালিকা — দেখা, সম্পাদনা, সক্রিয়/নিষ্ক্রিয় করা</td></tr>
+    <tr><td>🧾 All Orders</td><td>সব দোকানের অর্ডার এক জায়গায়</td></tr>
+    <tr><td>🗂️ Categories / Global Coupons</td><td>সবার জন্য প্রোডাক্ট ক্যাটাগরি ও প্ল্যাটফর্ম-ব্যাপী কুপন</td></tr>
+    <tr><td>✉️ SMS &amp; Email Log, Subscribers</td><td>পাঠানো বার্তা ও নিউজলেটার সাবস্ক্রাইবার</td></tr>
+    <tr><td>🖼️ Home Slider</td><td>মূল ল্যান্ডিং পেজের স্লাইডার</td></tr>
+    <tr><td>🌐 Custom Domains</td><td>দোকানগুলোর কাস্টম ডোমেইন অনুমোদন</td></tr>
+    <tr><td>🔌 Payment &amp; SMS Gateways</td><td>ShatajPay ও SMS গেটওয়ের API তথ্য</td></tr>
+    <tr><td>🤖 AI Settings</td><td>AI সার্ভিসের কী ও সেটিংস</td></tr>
+    <tr><td>💾 Backup &amp; Restore</td><td>ডেটাবেস ব্যাকআপ তৈরি ও ডাউনলোড</td></tr>
+    <tr><td>🔐 Security / Activity Logs</td><td>2FA এবং সব কার্যক্রমের রেকর্ড</td></tr>
+  </table></div>
+<h3>স্ক্রিনশট গ্যালারি</h3>
+<div class="shots2">
+<figure class="shot " data-img="81-admin-branches"><div class="bar"><span></span><span></span><span></span><em>/admin/branches</em></div><img src="manual-img/81-admin-branches.jpg" alt="ব্রাঞ্চ / দোকান তালিকা" loading="lazy"><figcaption><b>ব্রাঞ্চ / দোকান</b> তালিকা</figcaption></figure>
+<figure class="shot " data-img="82-admin-plans"><div class="bar"><span></span><span></span><span></span><em>/admin/plans</em></div><img src="manual-img/82-admin-plans.jpg" alt="প্যাকেজ / প্ল্যান" loading="lazy"><figcaption><b>প্যাকেজ / প্ল্যান</b></figcaption></figure></div>
+<div class="shots2">
+<figure class="shot " data-img="83-admin-plan-create"><div class="bar"><span></span><span></span><span></span><em>/admin/plans/create</em></div><img src="manual-img/83-admin-plan-create.jpg" alt="নতুন প্ল্যান — দাম, সীমা ও ফিচার" loading="lazy"><figcaption><b>নতুন প্ল্যান</b> — দাম, সীমা ও ফিচার</figcaption></figure>
+<figure class="shot " data-img="84-admin-subscriptions"><div class="bar"><span></span><span></span><span></span><em>/admin/subscriptions</em></div><img src="manual-img/84-admin-subscriptions.jpg" alt="সাবস্ক্রিপশন" loading="lazy"><figcaption><b>সাবস্ক্রিপশন</b></figcaption></figure></div>
+<div class="shots2">
+<figure class="shot " data-img="85-admin-invoices"><div class="bar"><span></span><span></span><span></span><em>/admin/invoices</em></div><img src="manual-img/85-admin-invoices.jpg" alt="ইনভয়েস ও পেমেন্ট" loading="lazy"><figcaption><b>ইনভয়েস ও পেমেন্ট</b></figcaption></figure>
+<figure class="shot " data-img="86-admin-orders"><div class="bar"><span></span><span></span><span></span><em>/admin/orders</em></div><img src="manual-img/86-admin-orders.jpg" alt="সব অর্ডার" loading="lazy"><figcaption><b>সব অর্ডার</b></figcaption></figure></div>
+<div class="shots2">
+<figure class="shot " data-img="87-admin-categories"><div class="bar"><span></span><span></span><span></span><em>/admin/categories</em></div><img src="manual-img/87-admin-categories.jpg" alt="ক্যাটাগরি" loading="lazy"><figcaption><b>ক্যাটাগরি</b></figcaption></figure>
+<figure class="shot " data-img="88-admin-coupons"><div class="bar"><span></span><span></span><span></span><em>/admin/coupons</em></div><img src="manual-img/88-admin-coupons.jpg" alt="গ্লোবাল কুপন" loading="lazy"><figcaption><b>গ্লোবাল কুপন</b></figcaption></figure></div>
+<div class="shots2">
+<figure class="shot " data-img="89-admin-commission"><div class="bar"><span></span><span></span><span></span><em>/admin/commission</em></div><img src="manual-img/89-admin-commission.jpg" alt="কমিশন" loading="lazy"><figcaption><b>কমিশন</b></figcaption></figure>
+<figure class="shot " data-img="90-admin-reports"><div class="bar"><span></span><span></span><span></span><em>/admin/reports</em></div><img src="manual-img/90-admin-reports.jpg" alt="প্ল্যাটফর্ম রিপোর্ট" loading="lazy"><figcaption><b>প্ল্যাটফর্ম রিপোর্ট</b></figcaption></figure></div>
+<div class="shots2">
+<figure class="shot " data-img="91-admin-messages"><div class="bar"><span></span><span></span><span></span><em>/admin/messages</em></div><img src="manual-img/91-admin-messages.jpg" alt="SMS ও ইমেইল লগ" loading="lazy"><figcaption><b>SMS ও ইমেইল লগ</b></figcaption></figure>
+<figure class="shot " data-img="92-admin-slider"><div class="bar"><span></span><span></span><span></span><em>/admin/home-slider</em></div><img src="manual-img/92-admin-slider.jpg" alt="হোম স্লাইডার" loading="lazy"><figcaption><b>হোম স্লাইডার</b></figcaption></figure></div>
+<div class="shots2">
+<figure class="shot " data-img="93-admin-domains"><div class="bar"><span></span><span></span><span></span><em>/admin/domains</em></div><img src="manual-img/93-admin-domains.jpg" alt="কাস্টম ডোমেইন" loading="lazy"><figcaption><b>কাস্টম ডোমেইন</b></figcaption></figure>
+<figure class="shot " data-img="94-admin-gateways"><div class="bar"><span></span><span></span><span></span><em>/admin/gateways</em></div><img src="manual-img/94-admin-gateways.jpg" alt="পেমেন্ট ও SMS গেটওয়ে (গোপন তথ্য ঢাকা)" loading="lazy"><figcaption><b>পেমেন্ট ও SMS গেটওয়ে</b> (গোপন তথ্য ঢাকা)</figcaption></figure></div>
+<div class="shots2">
+<figure class="shot " data-img="95-admin-ai"><div class="bar"><span></span><span></span><span></span><em>/admin/ai</em></div><img src="manual-img/95-admin-ai.jpg" alt="AI সেটিংস" loading="lazy"><figcaption><b>AI সেটিংস</b></figcaption></figure>
+<figure class="shot " data-img="96-admin-backups"><div class="bar"><span></span><span></span><span></span><em>/admin/backups</em></div><img src="manual-img/96-admin-backups.jpg" alt="ব্যাকআপ ও রিস্টোর" loading="lazy"><figcaption><b>ব্যাকআপ ও রিস্টোর</b></figcaption></figure></div>
+<div class="shots2">
+<figure class="shot " data-img="97-admin-settings"><div class="bar"><span></span><span></span><span></span><em>/admin/settings</em></div><img src="manual-img/97-admin-settings.jpg" alt="সিস্টেম সেটিংস" loading="lazy"><figcaption><b>সিস্টেম সেটিংস</b></figcaption></figure>
+<figure class="shot " data-img="98-admin-activity"><div class="bar"><span></span><span></span><span></span><em>/admin/activity</em></div><img src="manual-img/98-admin-activity.jpg" alt="অ্যাক্টিভিটি লগ" loading="lazy"><figcaption><b>অ্যাক্টিভিটি লগ</b></figcaption></figure></div>
+
+</section>
+
+<!-- ================= PLANS ================= -->
+<section id="plans" data-s>
+  <h2><span class="ic c13"><i class="fa-solid fa-layer-group"></i></span>প্ল্যান ও ফিচার</h2>
+  <p class="lead">কোন মেনু খোলা থাকবে তা আপনার প্ল্যানের উপর নির্ভর করে। সুপার অ্যাডমিন প্রতিটি প্ল্যানে এগুলো চালু/বন্ধ করেন।</p>
+  <div class="grid">
+    <div class="card"><h3 style="margin-top:0">🔓 ফিচার সমূহ</h3>POS · Inventory · Accounting ও P&amp;L · Courier API · CRM · Coupons · Basic ও Advanced Reports · REST API · Custom Domain · Blog · HRM ও Payroll · AI Assistant · SMS · WhatsApp · Email Marketing</div>
+    <div class="card"><h3 style="margin-top:0">📏 সীমা (Limits)</h3>প্রোডাক্ট সংখ্যা · মাসিক অর্ডার · কাস্টমার · স্টাফ · গুদাম/শাখা · স্টোরেজ (MB) · মাসিক বিক্রি (৳) · মাসিক SMS · মাসিক AI রিকোয়েস্ট</div>
+    <div class="card"><h3 style="margin-top:0">📅 মেয়াদ</h3>মাসিক · বার্ষিক · লাইফটাইম। কিছু প্ল্যানে ফ্রি ট্রায়াল থাকে।</div>
+  </div>
+</section>
+
+<!-- ================= FAQ ================= -->
+<section id="faq" data-s>
+  <h2><span class="ic c1"><i class="fa-solid fa-circle-question"></i></span>প্রশ্নোত্তর ও সমস্যা সমাধান</h2>
+  <details><summary>OTP কোড আসছে না, কী করব?</summary><p>মোবাইল নম্বর সঠিক কিনা দেখুন, ১–২ মিনিট অপেক্ষা করে "আবার পাঠান" চাপুন। তবুও না এলে সুপার অ্যাডমিনকে জানান (SMS গেটওয়ে ব্যালেন্স শেষ হতে পারে)।</p></details>
+  <details><summary>পাসওয়ার্ড ভুলে গেছি।</summary><p>লগইন পেজে "Forgot password" চাপুন, মোবাইল/ইমেইলে পাওয়া কোড দিয়ে নতুন পাসওয়ার্ড সেট করুন।</p></details>
+  <details><summary>কোনো মেনুতে তালা 🔒 দেখাচ্ছে কেন?</summary><p>ফিচারটি আপনার বর্তমান প্ল্যানে নেই। Settings → Subscription থেকে উচ্চতর প্ল্যানে আপগ্রেড করুন।</p></details>
+  <details><summary>নতুন প্রোডাক্ট যোগ করতে পারছি না / "Limit reached" দেখাচ্ছে।</summary><p>প্ল্যানের প্রোডাক্ট/অর্ডার/স্টাফ সীমা পূর্ণ হয়েছে। পুরনো অপ্রয়োজনীয় আইটেম মুছুন অথবা প্ল্যান আপগ্রেড করুন।</p></details>
+  <details><summary>কিছুই সেভ হচ্ছে না, শুধু দেখা যাচ্ছে।</summary><p>সাবস্ক্রিপশনের মেয়াদ শেষ হয়ে অ্যাকাউন্ট Read-only হয়েছে। Subscription পেজ থেকে নবায়ন করুন।</p></details>
+  <details><summary>স্টাফ কিছু মেনু দেখতে পাচ্ছে না।</summary><p>স্টাফের রোলে ঐ মডিউলের পারমিশন দেওয়া নেই। HR &amp; Staff → Staff &amp; Roles থেকে রোল এডিট করে টিক দিন।</p></details>
+  <details><summary>ছবি আপলোড হচ্ছে কিন্তু স্টোরে দেখাচ্ছে না।</summary><p>পেজ রিফ্রেশ করুন (<kbd>Ctrl</kbd>+<kbd>F5</kbd>)। স্টোরেজ সীমা পূর্ণ কিনা Subscription পেজে দেখুন।</p></details>
+  <details><summary>কুরিয়ারে পার্সেল যাচ্ছে না।</summary><p>Courier Settings-এ API Key সঠিক কিনা ও কুরিয়ার অ্যাকাউন্ট সক্রিয় কিনা দেখুন। ক্রেতার ঠিকানা ও ফোন নম্বর সম্পূর্ণ থাকতে হবে।</p></details>
+  <details><summary>bKash/Nagad পেমেন্ট "Pending verification" কেন?</summary><p>ক্রেতা ম্যানুয়ালি টাকা পাঠিয়ে ট্রানজেকশন আইডি দিয়েছেন। আপনার bKash/Nagad অ্যাপে মিলিয়ে দেখে অর্ডার পেজ থেকে পেমেন্ট "Paid" করুন।</p></details>
+
+  <div class="card" style="margin-top:20px;background:linear-gradient(120deg,#6366f1,#ec4899);color:#fff;border:0">
+    <h3 style="margin-top:0">🌟 সফল দোকানের ৫টি অভ্যাস</h3>
+    <ol style="margin:0">
+      <li>প্রতিদিন সকালে ড্যাশবোর্ড ও নতুন অর্ডার দেখুন।</li>
+      <li>অর্ডার কনফার্মের আগে Fraud Check করুন।</li>
+      <li>প্রোডাক্টে পরিষ্কার ছবি ও সম্পূর্ণ বিবরণ দিন।</li>
+      <li>মাসে অন্তত একবার SMS/কুপন ক্যাম্পেইন চালান।</li>
+      <li>2FA চালু রাখুন এবং স্টাফকে শুধু প্রয়োজনীয় পারমিশন দিন।</li>
+    </ol>
+  </div>
+</section>
+
+<footer>© মাল্টি ব্রাঞ্চ ই-কমার্স · ইউজার ম্যানুয়াল · <a href="#intro">উপরে যান ↑</a></footer>
+</div>
+</div>
+
+<script>
+(function(){
+  var side=document.getElementById('side');
+  document.getElementById('menuBtn').onclick=function(e){e.stopPropagation();side.classList.toggle('open')};
+  document.addEventListener('click',function(e){if(side.classList.contains('open')&&!side.contains(e.target))side.classList.remove('open')});
+  document.querySelectorAll('.toc a').forEach(function(a){a.addEventListener('click',function(){side.classList.remove('open')})});
+
+  // theme
+  var root=document.documentElement;
+  if(/[?&]compact=1/.test(location.search))root.classList.add('compact');
+  var eco=document.getElementById('ecoBtn');
+  if(eco)eco.onclick=function(){root.classList.add('compact');window.print()};
+  window.addEventListener('afterprint',function(){if(!/[?&]compact=1/.test(location.search))root.classList.remove('compact')});
+  try{var t=localStorage.getItem('manual-theme');if(t)root.setAttribute('data-theme',t)}catch(e){}
+  document.getElementById('themeBtn').onclick=function(){
+    var dark=root.getAttribute('data-theme')==='dark'||(!root.getAttribute('data-theme')&&matchMedia('(prefers-color-scheme: dark)').matches);
+    var n=dark?'light':'dark';root.setAttribute('data-theme',n);
+    try{localStorage.setItem('manual-theme',n)}catch(e){}
+  };
+
+  // search
+  var secs=[].slice.call(document.querySelectorAll('[data-s]'));
+  var links=[].slice.call(document.querySelectorAll('.toc a'));
+  document.getElementById('q').addEventListener('input',function(){
+    var q=this.value.trim().toLowerCase();
+    secs.forEach(function(s){
+      var hit=!q||s.textContent.toLowerCase().indexOf(q)>-1;
+      s.classList.toggle('hidden',!hit);
+      var l=document.querySelector('.toc a[href="#'+s.id+'"]');if(l)l.classList.toggle('hidden',!hit);
+    });
+    document.querySelectorAll('.toc .grp').forEach(function(g){g.classList.toggle('hidden',!!q)});
+  });
+
+  // download buttons: if the file is not reachable directly, switch to the Laravel route
+  document.querySelectorAll('.dl a').forEach(function(a){
+    var rel=a.getAttribute('href');
+    if(!window.fetch||!/^manual\//.test(rel))return;
+    fetch(rel,{method:'HEAD'}).then(function(r){
+      if(r.ok)return;
+      var alts=window.__manualAlt(rel),i=0;
+      (function next(){ if(i>=alts.length)return; var u=alts[i++];
+        fetch(u,{method:'HEAD'}).then(function(r2){ if(r2.ok)a.href=u; else next(); }).catch(next); })();
+    }).catch(function(){});
+  });
+
+  // open every FAQ answer when printing / saving as PDF
+  window.addEventListener('beforeprint',function(){document.querySelectorAll('details').forEach(function(d){d.open=true})});
+
+  // lightbox for screenshots
+  var lb=document.createElement('div');lb.className='lb';lb.innerHTML='<img alt="">';document.body.appendChild(lb);
+  lb.onclick=function(){lb.classList.remove('on')};
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')lb.classList.remove('on')});
+  document.querySelectorAll('figure.shot img').forEach(function(im){im.addEventListener('click',function(){lb.firstChild.src=im.src;lb.classList.add('on')})});
+
+  // active link on scroll
+  if('IntersectionObserver' in window){
+    var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){
+      links.forEach(function(l){l.classList.toggle('on',l.getAttribute('href')==='#'+e.target.id)});
+    }})},{rootMargin:'-30% 0px -60% 0px'});
+    secs.forEach(function(s){io.observe(s)});
+  }
+})();
+</script>
+</body>
+</html>

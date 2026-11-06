@@ -30,6 +30,15 @@
             <input type="file" name="logo" accept="image/png,image/jpeg,image/webp" class="form-control form-control-sm">
             <div class="form-text">স্টোর, লগইন পেইজ ও ম্যানেজার প্যানেলে দেখাবে।</div>
         </div>
+        <div class="col-12"><label class="form-label small fw-semibold">Store Home Banner</label>
+            @if ($branch->banner_url)
+                <div class="mb-2"><img src="{{ $branch->banner_url }}" class="rounded border w-100" style="max-height:180px;object-fit:cover;background:#f3f4f6">
+                    <div class="form-check small mt-2"><input class="form-check-input" type="checkbox" name="remove_banner" value="1" id="rmbanner"><label class="form-check-label text-danger" for="rmbanner">Remove current banner</label></div>
+                </div>
+            @endif
+            <input type="file" name="banner" accept="image/png,image/jpeg,image/webp" class="form-control form-control-sm">
+            <div class="form-text">সাব-ফোল্ডার হোম পেইজের ব্যানার। ছবি স্বয়ংক্রিয়ভাবে resize ও compress হবে।</div>
+        </div>
         <div class="col-md-6"><label class="form-label small fw-semibold">Reset Password</label><input type="password" name="password" class="form-control" placeholder="Leave empty to keep" autocomplete="new-password"></div>
     </div>
     <div class="panel-body border-top d-flex justify-content-between">

@@ -32,7 +32,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->redirectGuestsTo(fn (\Illuminate\Http\Request $r) => $r->is('admin', 'admin/*') ? route('admin.login') : route('login'));
         $middleware->redirectUsersTo(fn (\Illuminate\Http\Request $r) => $r->is('admin', 'admin/*') ? route('admin.dashboard') : route('manager.dashboard'));
         // ShatajPay posts server-to-server / cross-site to these
-        $middleware->validateCsrfTokens(except: ['payment/shatajpay/*', 'gateway/payment/callback', 'webhooks/*']);
+        $middleware->validateCsrfTokens(except: ['payment/shatajpay/*', 'webhooks/*']);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //

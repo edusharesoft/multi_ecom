@@ -39,6 +39,7 @@ class SettingController extends Controller
             'hero_image' => ['nullable', 'image', 'max:4096'],
             // footer (main website)
             'footer_about' => ['nullable', 'string', 'max:400'],
+            'footer_video' => ['nullable', 'string', 'max:255'],
             'footer_hours' => ['nullable', 'string', 'max:120'],
             'footer_whatsapp' => ['nullable', 'string', 'max:200', 'regex:#^(https?://\S+|\+?[\d\s-]{10,16})$#i'],
             'footer_instagram' => ['nullable', 'url', 'max:200', 'regex:#^https?://#i'],
@@ -64,6 +65,10 @@ class SettingController extends Controller
         $data['auth_show_video'] = $request->boolean('auth_show_video') ? '1' : '0';
         $data['footer_show_tiles'] = $request->boolean('footer_show_tiles') ? '1' : '0';
         $data['footer_show_pay'] = $request->boolean('footer_show_pay') ? '1' : '0';
+        $data['footer_video'] = trim((string) ($data['footer_video'] ?? '')) ?: null;
+        if ($data['footer_video'] && ! \App\Support\SiteFooter::youtubeEmbedUrl($data['footer_video'])) {
+            return back()->withInput()->withErrors(['footer_video' => 'Enter a valid YouTube video link.']);
+        }
         $links = \App\Support\SiteFooter::parseLinks($data['footer_links'] ?? '', $badLinks);
         if ($badLinks) {
             return back()->withInput()->withErrors(['footer_links' => 'এই লাইনগুলো ঠিক নেই (লিখুন: নাম | https://... অথবা নাম | /page): '.implode(' ; ', array_slice($badLinks, 0, 3))]);
@@ -77,7 +82,7 @@ class SettingController extends Controller
         foreach (['site_logo', 'auth_login_bg', 'auth_register_bg'] as $key) {
             $old = Setting::get($key);
             if ($request->hasFile($key)) {
-                $data[$key] = $request->file($key)->store('site', 'public');
+                $data[$key] = app(\App\Services\ImageUploadService::class)->store($request->file($key), 'site');
             } elseif ($request->boolean('remove_'.$key)) {
                 $data[$key] = null;
             } else {
@@ -93,9 +98,14 @@ class SettingController extends Controller
             if ($old = Setting::get('hero_image')) {
                 Storage::disk('public')->delete($old);
             }
-            $data['hero_image'] = $request->file('hero_image')->store('site', 'public');
+            $data['hero_image'] = app(\App\Services\ImageUploadService::class)->store($request->file('hero_image'), 'site');
         } else {
             unset($data['hero_image']);
+        }
+
+        $oldFooterVideo = Setting::get('footer_video');
+        if ($oldFooterVideo && ! preg_match('#^https?://#i', $oldFooterVideo)) {
+            Storage::disk('public')->delete($oldFooterVideo);
         }
 
         Setting::put($data);

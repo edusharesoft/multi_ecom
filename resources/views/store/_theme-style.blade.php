@@ -8,6 +8,7 @@
 @endif
 <style>
 :root{--brand:{{ $primary }};--brand-dark:{{ \App\Support\StoreTheme::shade($primary) }};--brand-soft:{{ \App\Support\StoreTheme::tint($primary) }};--radius:{{ $radius }}px}
-body{font-family:'{{ $font }}','Hind Siliguri',system-ui,sans-serif}
+/* Keep Bengali glyphs readable even when a store theme is configured with Poppins. */
+body{font-family:'Hind Siliguri','{{ $font }}',system-ui,sans-serif}
 .page-content img{max-width:100%;height:auto}.page-content iframe{max-width:100%;aspect-ratio:16/9;width:100%;height:auto}.ql-align-center{text-align:center}.ql-align-right{text-align:right}.ql-align-justify{text-align:justify}
 </style>

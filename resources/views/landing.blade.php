@@ -4,13 +4,13 @@
 {{-- Banner slideshow (Super Admin → Home Slider) — images only --}}
 @include('partials.banner-slider', ['sid' => 'homeSlider', 'slides' => \App\Support\PlatformSlides::forLanding()])
 
-{{-- Our Branches --}}
+{{-- Online Shops --}}
 <section class="section" id="branches">
     <div class="container">
-        <h2 class="section-title center">Our <span class="text-primary">Branches</span></h2>
-        <p class="text-center text-muted small mt-2">Visit any of our {{ $branches->count() }} branches across the country for an exceptional shopping experience</p>
+        <h2 class="section-title center">Our <span class="text-primary">Online Shops</span></h2>
+        <p class="text-center text-muted small mt-2">Visit any of our {{ $branches->count() }} online shops for an exceptional shopping experience</p>
         <div class="d-flex justify-content-center gap-2 mb-4 flex-wrap">
-            <span class="chip bg-primary"><i class="fa-solid fa-store"></i> {{ $branches->count() }} Branches</span>
+            <span class="chip bg-primary"><i class="fa-solid fa-store"></i> {{ $branches->count() }} Shops</span>
             <span class="chip bg-success"><i class="fa-regular fa-clock"></i> All Open Now</span>
             <span class="chip bg-warning text-dark"><i class="fa-solid fa-truck-fast"></i> Home Delivery</span>
         </div>
@@ -37,7 +37,7 @@
                 </div>
             @empty
                 <div class="col-12 text-center text-muted py-5">
-                    এখনও কোনো ব্রাঞ্চ নেই। <a href="{{ route('register') }}">প্রথম ব্রাঞ্চটি খুলুন</a>
+                    এখনও কোনো দোকান নেই। <a href="{{ route('register') }}">প্রথম অনলাইন দোকানটি খুলুন</a>
                 </div>
             @endforelse
         </div>
@@ -67,7 +67,7 @@
         <p class="text-center text-muted small mt-2 mb-4">Follow these simple steps to place your order easily and securely</p>
         <div class="row g-3">
             @foreach ([
-                ['fa-store', 'Choose a Branch', 'Select your nearest branch and visit its website'],
+                ['fa-store', 'Choose a Shop', 'Select an online shop and visit its storefront'],
                 ['fa-magnifying-glass', 'Browse Products', 'Explore categories, sizes and colors, and find your favorites'],
                 ['fa-cart-shopping', 'Add to Cart', 'Select your size, quantity, and add products to your cart'],
                 ['fa-credit-card', 'Checkout & Payment', 'Pay with ShatajPay, bKash, Nagad or Cash on Delivery'],

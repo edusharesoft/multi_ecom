@@ -24,6 +24,7 @@ class Setting extends Model
         'allow_registration' => '1',
         'facebook_url' => null,
         'footer_text' => 'Developed by Shataj Soft',
+        'footer_video' => null,
         // SaaS billing
         'grace_days' => '3',
         'expiry_action' => 'downgrade',          // downgrade | readonly | suspend

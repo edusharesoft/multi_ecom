@@ -101,8 +101,8 @@ class OnboardingController extends Controller
             'bkash_number' => ['nullable', 'regex:/^01[3-9]\d{8}$/'],
             'nagad_number' => ['nullable', 'regex:/^01[3-9]\d{8}$/'],
             'facebook_url' => ['nullable', 'url', 'max:500'],
-            'logo' => ['nullable', 'image', 'max:2048'],
-            'banner' => ['nullable', 'image', 'max:4096'],
+            'logo' => ['nullable', 'image', 'max:12288'],
+            'banner' => ['nullable', 'image', 'max:12288'],
             'favicon' => ['nullable', 'mimes:png,ico,jpg,jpeg,webp', 'max:512'],
         ]);
 

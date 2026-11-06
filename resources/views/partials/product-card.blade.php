@@ -8,6 +8,9 @@
     </a>
     <div class="info">
         <a href="{{ $product->url }}" class="name">{{ $product->name }}</a>
+        @if ($product->description)
+            <div class="description">{{ \Illuminate\Support\Str::limit(strip_tags($product->description), 92) }}</div>
+        @endif
         <div class="price mt-1">@money($product->currentPrice()) @if($product->comparePrice())<del>@money($product->comparePrice())</del>@endif</div>
         <div class="meta">
             @if ($showBranch ?? false){{ $product->branch->display_name }}

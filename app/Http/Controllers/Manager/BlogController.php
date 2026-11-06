@@ -118,7 +118,7 @@ class BlogController extends Controller
             'author_name' => ['nullable', 'string', 'max:100'],
             'meta_title' => ['nullable', 'string', 'max:70'],
             'meta_description' => ['nullable', 'string', 'max:170'],
-            'cover_file' => ['nullable', 'image', 'max:3072'],
+            'cover_file' => ['nullable', 'image', 'max:12288'],
         ]);
         unset($data['cover_file']);
         $data['content'] = HtmlSanitizer::clean($data['content'] ?? '');

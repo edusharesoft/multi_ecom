@@ -13,10 +13,40 @@ use Illuminate\Support\Facades\Route;
 /*
 | Main / Landing
 */
+
+// Fallback for hosts where public/storage is a directory instead of a symlink.
+// This keeps newly uploaded/resized files immediately visible in the storefront.
+Route::get('/storage/{path}', function (string $path) {
+    abort_if(str_contains($path, '..'), 404);
+    $full = \Illuminate\Support\Facades\Storage::disk('public')->path($path);
+    abort_unless(is_file($full), 404);
+
+    return response()->file($full);
+})->where('path', '.*')->name('storage.fallback');
+
+// User manual: serve the manual page, its screenshots and downloads through Laravel too.
+// Live hosts often point the domain at public_html (or block direct file access), so the static
+// files under public/ are not reachable; the page falls back to /manual-file/... automatically.
+$manualFile = function (string $path) {
+    abort_unless(preg_match('#^(manual-img|manual)/[A-Za-z0-9._-]+$#', $path) || $path === 'user-manual.html', 404);
+    foreach ([public_path($path), base_path('public/'.$path)] as $full) {
+        if (is_file($full)) {
+            return response()->file($full, ['Cache-Control' => 'public, max-age=604800']);
+        }
+    }
+    abort(404);
+};
+Route::get('/manual-file/{path}', $manualFile)->where('path', '.*')->name('manual.file');
+Route::get('/user-manual', fn () => $manualFile('user-manual.html'))->name('user.manual');
+
 Route::get('/', [LandingController::class, 'index'])->name('home');
+Route::get('/contact-us', [LandingController::class, 'contactUs'])->name('contact.us.frontend');
+Route::post('/contact-us', [LandingController::class, 'submitContactMessage'])->name('contact.submit')->middleware('throttle:5,1');
+Route::get('/subscription/plan', [LandingController::class, 'subscriptionPlan'])->name('subscription.plan.frontend');
 Route::get('/robots.txt', [\App\Http\Controllers\SeoController::class, 'robots'])->name('robots');
 Route::get('/sitemap.xml', [\App\Http\Controllers\SeoController::class, 'sitemapIndex'])->name('sitemap');
 Route::post('/subscribe', [LandingController::class, 'subscribe'])->name('subscribe')->middleware('throttle:10,1');
+
 
 /*
 | Branch manager auth: Registration -> OTP -> Login
@@ -498,6 +528,8 @@ Route::prefix('{branch:slug}')
     ->name('store.')
     ->group(function () {
         Route::get('/', [Store\StoreController::class, 'home'])->name('home');
+        Route::get('/contact', [Store\ContentController::class, 'contact'])->name('contact');
+        Route::post('/contact', [Store\ContentController::class, 'submitContact'])->name('contact.submit')->middleware('throttle:5,1');
         // Phase 10 PWA — installable store app
         Route::get('/manifest.webmanifest', [\App\Http\Controllers\PwaController::class, 'storeManifest'])->name('pwa.manifest');
         Route::get('/sw.js', [\App\Http\Controllers\PwaController::class, 'storeWorker'])->name('pwa.sw');

@@ -31,6 +31,8 @@ class Category extends Model
 
     public function getImageUrlAttribute(): string
     {
-        return $this->image ? asset('storage/'.$this->image) : asset('images/placeholder.svg');
+        return $this->image
+            ? asset('storage/'.ltrim($this->image, '/')).'?v='.($this->updated_at?->timestamp ?? 1)
+            : asset('images/placeholder.svg');
     }
 }

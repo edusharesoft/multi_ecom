@@ -16,6 +16,6 @@ class ProductImage extends Model
 
     public function getUrlAttribute(): string
     {
-        return asset('storage/'.$this->path);
+        return asset('storage/'.ltrim($this->path, '/')).'?v='.($this->updated_at?->timestamp ?? 1);
     }
 }

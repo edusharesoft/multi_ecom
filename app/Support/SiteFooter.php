@@ -51,6 +51,27 @@ class SiteFooter
         return is_array($links) ? $links : [];
     }
 
+    /** Return a safe YouTube embed URL for a supported YouTube video link. */
+    public static function youtubeEmbedUrl(?string $url): ?string
+    {
+        $url = trim((string) $url);
+        $parts = parse_url($url);
+        $host = strtolower($parts['host'] ?? '');
+        $isYoutubeHost = $host === 'youtu.be'
+            || $host === 'youtube.com'
+            || str_ends_with($host, '.youtube.com')
+            || $host === 'youtube-nocookie.com'
+            || str_ends_with($host, '.youtube-nocookie.com');
+
+        if (! $isYoutubeHost || ! in_array(strtolower($parts['scheme'] ?? ''), ['http', 'https'], true)) {
+            return null;
+        }
+
+        $videoId = AuthTheme::youtubeId($url);
+
+        return $videoId ? 'https://www.youtube-nocookie.com/embed/'.$videoId : null;
+    }
+
     /** Main website footer data. */
     public static function platform(): array
     {
@@ -66,9 +87,11 @@ class SiteFooter
             'name' => Setting::siteName(),
             'logo' => $logo ? asset('storage/'.$logo) : null,
             'about' => Setting::get('footer_about'),
+            'video_url' => self::youtubeEmbedUrl(Setting::get('footer_video')),
             'address' => Setting::get('site_address'),
             'phone' => Setting::get('site_phone'),
             'email' => Setting::get('site_email'),
+            'map_src' => 'https://maps.google.com/maps?q='.rawurlencode(Setting::get('site_address', 'Bangladesh')).'&z=12&output=embed',
             'hours' => Setting::get('footer_hours'),
             'socials' => self::socials([
                 'facebook' => Setting::get('facebook_url'), 'instagram' => Setting::get('footer_instagram'),
@@ -110,9 +133,11 @@ class SiteFooter
             'name' => $store->display_name,
             'logo' => $store->logo_url,
             'about' => ($theme['footer_about'] ?? '') ?: $store->about,
+            'video_url' => self::youtubeEmbedUrl($theme['footer_video'] ?? null),
             'address' => $store->address,
             'phone' => $store->store_phone ?: $store->mobile,
             'email' => $store->email,
+            'map_src' => MapEmbed::src($store),
             'hours' => $store->opening_hours,
             'socials' => self::socials([
                 'facebook' => $store->facebook_url, 'instagram' => $theme['instagram'] ?? null,

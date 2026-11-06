@@ -32,6 +32,11 @@
             <div class="panel-body row g-3">
                 <div class="col-12"><label class="form-label small fw-semibold">About text (ফুটারে লোগোর নিচে)</label>
                     <textarea name="footer_about" rows="2" maxlength="400" class="form-control">{{ old('footer_about', $s['footer_about'] ?? '') }}</textarea></div>
+                <div class="col-12">
+                    <label class="form-label small fw-semibold">Tutorial video YouTube link</label>
+                    <input type="url" name="footer_video" value="{{ old('footer_video', \App\Support\SiteFooter::youtubeEmbedUrl($s['footer_video'] ?? null) ? $s['footer_video'] : '') }}" class="form-control" placeholder="https://www.youtube.com/watch?v=XXXXXXXXXXX">
+                    <div class="form-text">YouTube watch, Shorts, live, embed, or youtu.be links are supported. Clear the field to remove the video.</div>
+                </div>
                 <div class="col-md-6"><label class="form-label small fw-semibold">Opening hours</label><input name="footer_hours" value="{{ old('footer_hours', $s['footer_hours'] ?? '') }}" class="form-control" placeholder="শনি–বৃহস্পতি, সকাল ১০টা – রাত ৯টা"></div>
                 <div class="col-md-6"><label class="form-label small fw-semibold">WhatsApp (নম্বর বা লিংক)</label><input name="footer_whatsapp" value="{{ old('footer_whatsapp', $s['footer_whatsapp'] ?? '') }}" class="form-control" placeholder="01XXXXXXXXX"></div>
                 @foreach (['footer_instagram' => 'Instagram', 'footer_youtube' => 'YouTube', 'footer_tiktok' => 'TikTok'] as $k => $l)

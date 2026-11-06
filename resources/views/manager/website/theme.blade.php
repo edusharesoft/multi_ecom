@@ -48,6 +48,9 @@
         <div class="panel mb-3"><div class="panel-head">Footer</div><div class="panel-body small">
             <label class="form-label mb-0">About text</label>
             <textarea name="footer_about" rows="3" class="form-control form-control-sm mb-2">{{ old('footer_about', $theme['footer_about']) }}</textarea>
+            <label class="form-label mb-0">Tutorial video YouTube link</label>
+            <input type="url" name="footer_video" value="{{ old('footer_video', \App\Support\SiteFooter::youtubeEmbedUrl($theme['footer_video'] ?? null) ? $theme['footer_video'] : '') }}" class="form-control form-control-sm mb-2" placeholder="https://www.youtube.com/watch?v=XXXXXXXXXXX">
+            <div class="form-text mb-2">YouTube watch, Shorts, live, embed, or youtu.be links. Clear the field to remove the video.</div>
             @foreach (['instagram' => 'Instagram', 'youtube' => 'YouTube', 'tiktok' => 'TikTok', 'whatsapp' => 'WhatsApp (নম্বর বা লিংক)'] as $k => $l)
                 <label class="form-label mb-0">{{ $l }} URL</label><input name="{{ $k }}" value="{{ old($k, $theme[$k] ?? '') }}" class="form-control form-control-sm mb-2" placeholder="https://">
             @endforeach

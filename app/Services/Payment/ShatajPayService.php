@@ -44,7 +44,9 @@ class ShatajPayService
         $base = config('shataj.pay');
         $row = PaymentGateway::platform();
 
-        if ($row) {
+        // An incomplete or disabled database row must not shadow the working
+        // environment configuration (the demo uses the built-in fake flow).
+        if ($row && ($row->isUsable() || $row->mode === 'fake')) {
             return $this->fromRow($row, $base, $row->mode ?: 'fake') + ['source' => 'platform', 'active' => $row->isUsable() || $row->mode === 'fake'];
         }
 
@@ -85,6 +87,7 @@ class ShatajPayService
     }
 
     /** Create a payment for a customer Order or a SaaS subscription Invoice and return the gateway URL. */
+
     public function initiate(Order|Invoice $payable): string
     {
         $cfg = $this->configFor($payable);
@@ -127,6 +130,10 @@ class ShatajPayService
             'orderId' => $orderId,
         ];
 
+        $sandbox = $cfg['mode'] == 'sandbox' ? 0 : 1;
+        if ($sandbox == 0) {
+            throw new RuntimeException('ShatajPay connection failed: ShatajPay must be live for payments.');
+        }
         try {
             $response = Http::timeout($cfg['timeout'] ?? 20)
                 ->acceptJson()
@@ -136,13 +143,13 @@ class ShatajPayService
                     'appkey' => (string) $cfg['app_key'],
                     'appsecret' => (string) $cfg['app_secret'],
                     // as in the official sample: sandbox => 0, production => 1
-                    'sandbox' => $cfg['mode'] === 'sandbox' ? '0' : '1',
+                    'sandbox' => $sandbox,
                     'gatewayid' => (string) $cfg['gateway_id'],
                 ])
-                ->post($cfg['base_url'].$cfg['endpoint'], $body);
+                ->post($cfg['base_url'] . $cfg['endpoint'], $body);
         } catch (Throwable $e) {
             $payment->update(['status' => 'failed', 'payload' => $payment->payload + ['error' => $e->getMessage()]]);
-            throw new RuntimeException('ShatajPay connection failed: '.$e->getMessage(), 0, $e);
+            throw new RuntimeException('ShatajPay connection failed: ' . $e->getMessage(), 0, $e);
         }
 
         $json = $response->json() ?? [];
@@ -161,6 +168,7 @@ class ShatajPayService
 
         return $url;
     }
+
 
     /**
      * Read the callback (?status=Complete|Failed&orderId=...).

@@ -1,4 +1,12 @@
 <IfModule mod_rewrite.c>
+    # Accept camera originals; ImageUploadService compresses the stored copy to <= 1 MB.
+    # Only when PHP runs as an Apache module; FastCGI/PHP-FPM hosts (Laragon) reject php_value.
+    <IfModule php_module>
+        php_value upload_max_filesize 12M
+        php_value post_max_size 64M
+        php_value max_file_uploads 50
+    </IfModule>
+
     <IfModule mod_negotiation.c>
         Options -MultiViews -Indexes
     </IfModule>

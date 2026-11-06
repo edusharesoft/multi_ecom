@@ -35,6 +35,7 @@ class WebsiteController extends Controller
             'announcement_link' => ['nullable', 'url', 'max:250', 'regex:#^https?://#i'],
             'announcement_bg' => ['nullable', 'regex:/^#[0-9a-fA-F]{6}$/'],
             'footer_about' => ['nullable', 'string', 'max:400'],
+            'footer_video' => ['nullable', 'string', 'max:255'],
             'instagram' => ['nullable', 'url', 'max:200', 'regex:#^https?://#i'], 'youtube' => ['nullable', 'url', 'max:200', 'regex:#^https?://#i'], 'tiktok' => ['nullable', 'url', 'max:200', 'regex:#^https?://#i'],
             'whatsapp' => ['nullable', 'string', 'max:200', 'regex:#^(https?://\S+|\+?[\d\s-]{10,16})$#i'],
             'footer_links' => ['nullable', 'string', 'max:3000'],
@@ -52,7 +53,17 @@ class WebsiteController extends Controller
             return back()->withInput()->withErrors(['footer_links' => 'এই লাইনগুলো ঠিক নেই (লিখুন: নাম | https://... অথবা নাম | /page): '.implode(' ; ', array_slice($badLinks, 0, 3))]);
         }
 
+        $data['footer_video'] = trim((string) ($data['footer_video'] ?? '')) ?: null;
+        if ($data['footer_video'] && ! \App\Support\SiteFooter::youtubeEmbedUrl($data['footer_video'])) {
+            return back()->withInput()->withErrors(['footer_video' => 'সঠিক YouTube ভিডিও লিংক দিন।']);
+        }
+
         $opts = $b->options ?? [];
+        $oldFooterVideo = $opts['theme']['footer_video'] ?? null;
+        if ($oldFooterVideo && ! preg_match('#^https?://#i', $oldFooterVideo)) {
+            $b->deleteUpload($oldFooterVideo);
+        }
+
         $opts['default_locale'] = $data['default_locale'] ?? null;
         $opts['theme'] = collect($data)->except(['menu', 'default_locale'])->map(fn ($v) => is_string($v) ? trim($v) : $v)->all()
             + ['show_newsletter' => false, 'show_all_branches' => false];
@@ -92,7 +103,7 @@ class WebsiteController extends Controller
             'sections.*.limit' => ['nullable', 'integer', 'min:1', 'max:24'],
             'sections.*.content' => ['nullable', 'string', 'max:20000'],
             'sections.*.link' => ['nullable', 'string', 'max:250', 'regex:#^(https?://|/)#i'],
-            'sections.*.image_file' => ['nullable', 'image', 'max:3072'],
+            'sections.*.image_file' => ['nullable', 'image', 'max:12288'],
         ]);
         $old = collect(StoreTheme::sections($b))->keyBy('id');
         $out = [];
@@ -194,7 +205,7 @@ class WebsiteController extends Controller
     {
         $b = Tenancy::branch();
         abort_unless(Tenancy::can('website.edit') || Tenancy::can('blog.add') || Tenancy::can('blog.edit'), 403);
-        $request->validate(['image' => ['required', 'image', 'max:3072']]);
+        $request->validate(['image' => ['required', 'image', 'max:12288']]);
         if (! $b->hasStorageFor($request->file('image'))) {
             return response()->json(['message' => 'Storage limit reached'], 422);
         }

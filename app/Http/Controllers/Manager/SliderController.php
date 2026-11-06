@@ -63,7 +63,7 @@ class SliderController extends Controller
             'button_text' => ['nullable', 'string', 'max:40'],
             'position' => ['required', Rule::in(['slider', 'banner'])],
             'sort' => ['nullable', 'integer', 'min:0'],
-            'image' => [$imageRequired ? 'required' : 'nullable', 'image', 'max:4096'],
+            'image' => [$imageRequired ? 'required' : 'nullable', 'image', 'max:12288'],
         ]);
         $data['sort'] = (int) ($data['sort'] ?? 0);
         $data['is_active'] = $request->boolean('is_active', true);

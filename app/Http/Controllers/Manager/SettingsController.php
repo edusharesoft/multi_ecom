@@ -47,8 +47,8 @@ class SettingsController extends Controller
             'nagad_number' => ['nullable', 'regex:/^01[3-9]\d{8}$/'],
             'shipping_charge' => ['required', 'numeric', 'min:0', 'max:100000'],
             'tax_percent' => ['required', 'numeric', 'min:0', 'max:50'],
-            'logo' => ['nullable', 'image', 'max:2048'],
-            'banner' => ['nullable', 'image', 'max:4096'],
+            'logo' => ['nullable', 'image', 'max:12288'],
+            'banner' => ['nullable', 'image', 'max:12288'],
             'favicon' => ['nullable', 'mimes:png,ico,jpg,jpeg,webp', 'max:512'],
             'status' => ['required', Rule::in(['active', 'inactive'])],
         ]);

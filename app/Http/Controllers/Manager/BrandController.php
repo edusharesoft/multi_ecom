@@ -59,7 +59,7 @@ class BrandController extends Controller
     {
         $data = $request->validate([
             'name' => ['required', 'string', 'max:100', Rule::unique('brands')->where('branch_id', Tenancy::branch()->id)->ignore($brand?->id)],
-            'logo' => ['nullable', 'image', 'max:1024'],
+            'logo' => ['nullable', 'image', 'max:12288'],
         ]);
         $data['is_active'] = $request->boolean('is_active', true);
         unset($data['logo']);

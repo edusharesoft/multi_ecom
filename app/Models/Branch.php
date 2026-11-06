@@ -252,8 +252,8 @@ class Branch extends Authenticatable
     /** Store an upload on the public disk and count it against the plan storage limit. */
     public function storeUpload(\Illuminate\Http\UploadedFile $file, string $dir): string
     {
-        $path = $file->store($dir, 'public');
-        $this->addStorage((int) $file->getSize());
+        $path = app(\App\Services\ImageUploadService::class)->store($file, $dir);
+        $this->addStorage((int) \Illuminate\Support\Facades\Storage::disk('public')->size($path));
 
         return $path;
     }

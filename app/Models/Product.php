@@ -137,7 +137,11 @@ class Product extends Model
 
     public function getImageUrlAttribute(): string
     {
-        return $this->image ? asset('storage/'.$this->image) : asset('images/placeholder.svg');
+        // Use the configured application URL so images also work when the app
+        // is deployed behind a subdirectory or a reverse proxy.
+        return $this->image
+            ? asset('storage/'.ltrim($this->image, '/')).'?v='.($this->updated_at?->timestamp ?? 1)
+            : asset('images/placeholder.svg');
     }
 
     public function getUrlAttribute(): string

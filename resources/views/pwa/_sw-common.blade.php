@@ -82,6 +82,18 @@ async function page(req, url, cacheIt) {
 /** Static files: served from the cache at once, refreshed in the background. */
 async function asset(e, req) {
     const c = await caches.open(ASSETS);
+    const reqUrl = new URL(req.url);
+    // User-uploaded files must be network-first. A stale/failed cached image
+    // otherwise survives after a replacement upload and disappears on reload.
+    if (reqUrl.pathname.includes('/storage/')) {
+        try {
+            const fresh = await fetch(req, { cache: 'no-store' });
+            if (fresh && fresh.ok) e.waitUntil(c.put(req, fresh.clone()).then(() => trim(ASSETS, 250)));
+            return fresh;
+        } catch (err) {
+            return (await c.match(req, { ignoreVary: true })) || new Response('', { status: 504, statusText: 'Offline' });
+        }
+    }
     const hit = (await c.match(req, { ignoreVary: true })) || (await (await caches.open(CORE)).match(req, { ignoreVary: true }));
     const net = fetch(req).then((res) => {
         if (res && (res.ok || res.type === 'opaque')) {

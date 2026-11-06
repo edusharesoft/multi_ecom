@@ -69,7 +69,7 @@ class RegisterController extends Controller
 
         return redirect()->route('otp.show')->with(
             $sent ? 'success' : 'warning',
-            $sent ? "আপনার মোবাইল ({$branch->mobile}) এ একটি OTP পাঠানো হয়েছে।" : 'OTP পাঠাতে সমস্যা হয়েছে, আবার চেষ্টা করুন।'
+            $sent ? "আপনার মোবাইল ({$branch->mobile}) ও ইমেইলে একটি OTP পাঠানো হয়েছে।" : 'OTP পাঠাতে সমস্যা হয়েছে, আবার চেষ্টা করুন।'
         );
     }
 }

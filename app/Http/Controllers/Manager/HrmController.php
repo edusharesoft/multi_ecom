@@ -60,7 +60,7 @@ class HrmController extends Controller
             'emergency_contact' => ['nullable', 'string', 'max:120'],
             'is_active' => ['nullable', 'boolean'],
             'notes' => ['nullable', 'string', 'max:1000'],
-            'photo_file' => ['nullable', 'image', 'max:2048'],
+            'photo_file' => ['nullable', 'image', 'max:12288'],
         ]);
         unset($data['photo_file']);
         $data['allowance'] = (float) ($data['allowance'] ?? 0);

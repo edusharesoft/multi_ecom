@@ -26,7 +26,7 @@ class HomeSliderController extends Controller
         }
         $rows[] = [
             'id' => (string) Str::uuid(),
-            'image' => $request->file('image')->store('site/slides', 'public'),
+            'image' => app(\App\Services\ImageUploadService::class)->store($request->file('image'), 'site/slides'),
             'link' => $data['link'] ?? null,
             'sort' => $data['sort'],
             'active' => true,
@@ -44,7 +44,7 @@ class HomeSliderController extends Controller
         $i = $this->find($rows, $slide);
         if ($request->hasFile('image')) {
             Storage::disk('public')->delete($rows[$i]['image']);
-            $rows[$i]['image'] = $request->file('image')->store('site/slides', 'public');
+            $rows[$i]['image'] = app(\App\Services\ImageUploadService::class)->store($request->file('image'), 'site/slides');
         }
         $rows[$i]['link'] = $data['link'] ?? null;
         $rows[$i]['sort'] = $data['sort'];

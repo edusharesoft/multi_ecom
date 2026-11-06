@@ -114,60 +114,229 @@
                         <div class="col-4"><a href="{{ $store->map_url ?: 'https://www.google.com/maps/search/'.urlencode($store->address) }}" target="_blank" rel="noopener" class="btn btn-brand w-100 btn-sm">Find in Store</a></div>
                     </div>
                 </div>
-            </div>
-        </div>
 
-        {{-- Description + specification --}}
-        <div class="row g-4 mt-1" id="desc">
-            <div class="{{ $product->specifications ? 'col-lg-7' : 'col-12' }}">
-                <div class="pd-box h-100">
-                    <h5 class="fw-bold">Product Description</h5>
-                    <div class="small text-muted" style="white-space:pre-line">{{ $product->description ?: 'No description available.' }}</div>
-                </div>
-            </div>
-            @if ($product->specifications)
-                <div class="col-lg-5">
-                    <div class="pd-box h-100">
-                        <h5 class="fw-bold">Specification</h5>
-                        <table class="table table-sm small mb-0">
-                            @foreach ($product->specifications as $spec)<tr><th class="text-muted fw-normal" style="width:40%">{{ $spec['key'] }}</th><td>{{ $spec['value'] }}</td></tr>@endforeach
-                        </table>
+                <div class="mt-5 sb-product-tabs" id="desc">
+                    <ul class="nav nav-tabs" id="productInfoTabs" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active fw-semibold" id="description-tab" data-bs-toggle="tab" data-bs-target="#description-pane" type="button" role="tab" aria-controls="description-pane" aria-selected="true">
+                                <i class="fa-solid fa-align-left me-1"></i>Description
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link fw-semibold" id="reviews-tab" data-bs-toggle="tab" data-bs-target="#reviews-pane" type="button" role="tab" aria-controls="reviews-pane" aria-selected="false">
+                                <i class="fa-regular fa-star me-1"></i>Reviews
+                                @if ($product->reviews->count())
+                                    <span class="badge bg-light text-muted ms-1">{{ $product->reviews->count() }}</span>
+                                @endif
+                            </button>
+                        </li>
+                    </ul>
+                    <div class="tab-content pt-4" id="productInfoTabsContent">
+                        <div class="tab-pane fade show active" id="description-pane" role="tabpanel" aria-labelledby="description-tab" tabindex="0">
+                            <div class="row g-4">
+                                <div class="{{ $product->specifications ? 'col-lg-7' : 'col-12' }}">
+                                    <div class="pd-box h-100">
+                                        <h5 class="fw-bold mb-3">Product Description</h5>
+                                        <div class="small text-muted" style="white-space:pre-line">{{ $product->description ?: 'No description available.' }}</div>
+                                    </div>
+                                </div>
+                                @if ($product->specifications)
+                                    <div class="col-lg-5">
+                                        <div class="pd-box h-100">
+                                            <h5 class="fw-bold mb-3">Specification</h5>
+                                            <div class="table-responsive">
+                                                <table class="table table-sm small mb-0">
+                                                    <tbody>
+                                                        @foreach ($product->specifications as $spec)
+                                                            <tr>
+                                                                <th class="text-muted fw-normal" style="width:40%">{{ $spec['key'] }}</th>
+                                                                <td>{{ $spec['value'] }}</td>
+                                                            </tr>
+                                                        @endforeach
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                @endif
+                            </div>
+                        </div>
+                        <div class="tab-pane fade" id="reviews-pane" role="tabpanel" aria-labelledby="reviews-tab" tabindex="0">
+                            <div class="sb-review-header d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
+                                <div>
+                                    <h4 class="fw-bold mb-1">Customer Reviews</h4>
+                                    <p class="text-muted small mb-0">See what customers are saying about this product.</p>
+                                </div>
+                                <button type="button" class="btn btn-brand btn-sm" onclick="document.getElementById('review-form').scrollIntoView({behavior:'smooth',block:'center'})">
+                                    <i class="fa-solid fa-pen me-1"></i>Write a Review
+                                </button>
+                            </div>
+                            @if ($product->reviews->count())
+                                @php
+                                    $reviewCount = $product->reviews->count();
+                                    $averageRating = round($product->reviews->avg('rating'), 1);
+                                @endphp
+                                <div class="sb-review-summary mb-4">
+                                    <div class="row g-3 align-items-center">
+                                        <div class="col-md-4">
+                                            <div class="text-center">
+                                                <div class="sb-review-average">{{ number_format($averageRating, 1) }}</div>
+                                                <div class="stars fs-5 mb-1">
+                                                    @for ($i = 1; $i <= 5; $i++)
+                                                        {{ $i <= round($averageRating) ? '★' : '☆' }}
+                                                    @endfor
+                                                </div>
+                                                <div class="small text-muted">Based on {{ $reviewCount }} {{ $reviewCount == 1 ? 'review' : 'reviews' }}</div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-8">
+                                            @for ($rating = 5; $rating >= 1; $rating--)
+                                                @php
+                                                    $ratingCount = $product->reviews->where('rating', $rating)->count();
+                                                    $ratingPercent = $reviewCount ? ($ratingCount / $reviewCount) * 100 : 0;
+                                                @endphp
+                                                <div class="d-flex align-items-center gap-2 mb-1">
+                                                    <span class="small text-muted sb-rating-label">{{ $rating }} <span class="stars">★</span></span>
+                                                    <div class="progress flex-grow-1 sb-rating-progress">
+                                                        <div class="progress-bar" style="width:{{ $ratingPercent }}%"></div>
+                                                    </div>
+                                                    <span class="small text-muted sb-rating-count">{{ $ratingCount }}</span>
+                                                </div>
+                                            @endfor
+                                        </div>
+                                    </div>
+                                </div>
+                            @endif
+                            <div class="sb-review-form mb-4" id="review-form">
+                                <div class="d-flex align-items-center gap-2 mb-3">
+                                    <div class="sb-review-form-icon"><i class="fa-solid fa-pen"></i></div>
+                                    <div>
+                                        <h5 class="fw-bold mb-0">Write a Review</h5>
+                                        <small class="text-muted">Share your experience with this product.</small>
+                                    </div>
+                                </div>
+                                <form method="POST" action="{{ route('store.review', [$store, $product->slug]) }}" enctype="multipart/form-data">
+                                    @csrf
+                                    <div class="row g-3">
+                                        <div class="col-md-auto">
+                                            <label class="form-label small fw-semibold">Rating</label>
+                                            <select name="rating" class="form-select form-select-sm stars sb-rating-select" required>
+                                                @for ($i = 5; $i >= 1; $i--)
+                                                    <option value="{{ $i }}">{{ str_repeat('★', $i) }}</option>
+                                                @endfor
+                                            </select>
+                                        </div>
+                                        @unless ($storeCustomer)
+                                            <div class="col-md-4">
+                                                <label class="form-label small fw-semibold">Your Name</label>
+                                                <input name="name" class="form-control form-control-sm" placeholder="Enter your name" required maxlength="100">
+                                            </div>
+                                        @endunless
+                                        <div class="col-md flex-grow-1">
+                                            <label class="form-label small fw-semibold">Your Review</label>
+                                            <input name="comment" class="form-control form-control-sm" placeholder="Write your experience..." required maxlength="1000">
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label class="form-label small fw-semibold">Photo <span class="text-muted fw-normal">(Optional)</span></label>
+                                            <input type="file" name="image" accept="image/*" class="form-control form-control-sm">
+                                        </div>
+                                        <div class="col-12">
+                                            <button class="btn btn-brand btn-sm px-4">
+                                                <i class="fa-solid fa-paper-plane me-1"></i>Submit Review
+                                            </button>
+                                        </div>
+                                    </div>
+                                </form>
+                                @error('comment')
+                                    <div class="text-danger small mt-2"><i class="fa-solid fa-circle-exclamation me-1"></i>{{ $message }}</div>
+                                @enderror
+                            </div>
+                            <div class="sb-review-list">
+                                @forelse ($product->reviews as $r)
+                                    <div class="sb-review-item">
+                                        <div class="d-flex gap-3">
+                                            <div class="sb-review-avatar">{{ strtoupper(substr($r->name ?: 'C', 0, 1)) }}</div>
+                                            <div class="flex-grow-1">
+                                                <div class="d-flex flex-wrap justify-content-between gap-2">
+                                                    <div>
+                                                        <div class="d-flex flex-wrap align-items-center gap-2">
+                                                            <strong class="small">{{ $r->name }}</strong>
+                                                            @if ($r->is_verified)
+                                                                <span class="sb-verified-badge"><i class="fa-solid fa-circle-check"></i>Verified Purchase</span>
+                                                            @endif
+                                                        </div>
+                                                        <div class="d-flex flex-wrap align-items-center gap-2 mt-1">
+                                                            <span class="stars small">{{ str_repeat('★', $r->rating) }}{{ str_repeat('☆', 5 - $r->rating) }}</span>
+                                                            <span class="text-muted small">{{ $r->created_at->diffForHumans() }}</span>
+                                                        </div>
+                                                    </div>
+                                                    <form method="POST" action="{{ route('store.review.report', [$store, $product->slug, $r->id]) }}">
+                                                        @csrf
+                                                        <button type="submit" class="btn btn-link btn-sm p-0 text-muted" title="Report review">
+                                                            <i class="fa-regular fa-flag"></i>
+                                                        </button>
+                                                    </form>
+                                                </div>
+                                                <div class="small text-dark mt-3 sb-review-comment">{{ $r->comment }}</div>
+                                                @if ($r->image_url)
+                                                    <div class="mt-3">
+                                                        <a href="{{ $r->image_url }}" target="_blank" class="sb-review-image-link">
+                                                            <img src="{{ $r->image_url }}" alt="Review image" class="sb-review-image">
+                                                        </a>
+                                                    </div>
+                                                @endif
+                                                @if ($r->reply)
+                                                    <div class="sb-store-reply mt-3">
+                                                        <div class="small fw-semibold text-brand mb-1"><i class="fa-solid fa-reply me-1"></i>{{ $store->display_name }}</div>
+                                                        <div class="small text-muted">{{ $r->reply }}</div>
+                                                    </div>
+                                                @endif
+                                            </div>
+                                        </div>
+                                    </div>
+                                @empty
+                                    <div class="sb-no-reviews text-center py-5">
+                                        <div class="sb-no-review-icon mb-3"><i class="fa-regular fa-comment-dots"></i></div>
+                                        <h6 class="fw-bold mb-1">No reviews yet</h6>
+                                        <p class="small text-muted mb-3">Be the first customer to review this product.</p>
+                                        <button type="button" class="btn btn-brand btn-sm" onclick="document.getElementById('review-form').scrollIntoView({behavior:'smooth',block:'center'})">
+                                            <i class="fa-solid fa-pen me-1"></i>Write the First Review
+                                        </button>
+                                    </div>
+                                @endforelse
+                            </div>
+                        </div>
                     </div>
                 </div>
-            @endif
-        </div>
-
-        {{-- Reviews --}}
-        <div class="mt-4" id="reviews">
-            <h5 class="fw-bold">Write a Review</h5>
-            <form method="POST" action="{{ route('store.review', [$store, $product->slug]) }}" enctype="multipart/form-data" class="d-flex gap-2 flex-wrap align-items-center">
-                @csrf
-                <select name="rating" class="form-select form-select-sm stars" style="width:110px">
-                    @for ($i = 5; $i >= 1; $i--)<option value="{{ $i }}">{{ str_repeat('★', $i) }}</option>@endfor
-                </select>
-                @unless ($storeCustomer)<input name="name" class="form-control form-control-sm" style="max-width:170px" placeholder="Your name" required maxlength="100">@endunless
-                <input name="comment" class="form-control form-control-sm flex-fill" style="min-width:200px" placeholder="Write a short review..." required maxlength="1000">
-                <input type="file" name="image" accept="image/*" class="form-control form-control-sm" style="max-width:220px" title="Photo (optional)">
-                <button class="btn btn-brand btn-sm">Submit</button>
-            </form>
-            @error('comment')<div class="text-danger small">{{ $message }}</div>@enderror
-
-            <h5 class="fw-bold mt-4">Customer Reviews</h5>
-            @forelse ($product->reviews as $r)
-                <div class="border-bottom py-2 small">
-                    <div class="d-flex justify-content-between">
-                        <span><span class="stars">{{ str_repeat('★', $r->rating) }}{{ str_repeat('☆', 5 - $r->rating) }}</span> <strong>{{ $r->name }}</strong>
-                            @if ($r->is_verified)<span class="badge bg-success-subtle text-success"><i class="fa-solid fa-circle-check"></i> Verified Purchase</span>@endif
-                            <span class="text-muted">· {{ $r->created_at->diffForHumans() }}</span></span>
-                        <form method="POST" action="{{ route('store.review.report', [$store, $product->slug, $r->id]) }}">@csrf<button class="btn btn-link btn-sm p-0 text-muted" title="Report"><i class="fa-regular fa-flag"></i></button></form>
-                    </div>
-                    <div>{{ $r->comment }}</div>
-                    @if ($r->image_url)<a href="{{ $r->image_url }}" target="_blank"><img src="{{ $r->image_url }}" class="rounded mt-1" style="height:70px"></a>@endif
-                    @if ($r->reply)<div class="bg-light rounded p-2 mt-1"><strong class="text-brand"><i class="fa-solid fa-reply"></i> {{ $store->display_name }}:</strong> {{ $r->reply }}</div>@endif
-                </div>
-            @empty
-                <p class="small text-muted">এখনও কোনো রিভিউ নেই। প্রথম রিভিউটি দিন!</p>
-            @endforelse
+                <style>
+                .sb-product-tabs .nav-tabs{border-bottom:1px solid #dee2e6}
+                .sb-product-tabs .nav-link{color:#6c757d;border:0;border-bottom:2px solid transparent;border-radius:0;padding:.7rem 1rem}
+                .sb-product-tabs .nav-link:hover{color:var(--bs-primary);border-color:transparent}
+                .sb-product-tabs .nav-link.active{color:var(--bs-primary);background:transparent;border-color:transparent transparent var(--bs-primary)}
+                .sb-product-tabs .tab-content{min-height:150px}
+                .sb-review-summary{padding:1.25rem;border:1px solid #e9ecef;border-radius:.75rem;background:#fff}
+                .sb-review-average{font-size:2.5rem;line-height:1;font-weight:700}
+                .sb-rating-progress{height:6px;background:#edf0f2;border-radius:10px}
+                .sb-rating-progress .progress-bar{background:var(--bs-primary);border-radius:10px}
+                .sb-rating-label{width:42px}
+                .sb-rating-count{width:25px;text-align:right}
+                .sb-review-form{padding:1.25rem;border:1px solid #e9ecef;border-radius:.75rem;background:#fafbfc}
+                .sb-review-form-icon{width:34px;height:34px;display:flex;align-items:center;justify-content:center;border-radius:50%;background:var(--bs-primary-bg-subtle);color:var(--bs-primary)}
+                .sb-rating-select{min-width:105px}
+                .sb-review-item{padding:1.25rem 0;border-bottom:1px solid #edf0f2}
+                .sb-review-item:first-child{padding-top:0}
+                .sb-review-avatar{width:42px;height:42px;min-width:42px;display:flex;align-items:center;justify-content:center;border-radius:50%;background:var(--bs-primary-bg-subtle);color:var(--bs-primary);font-weight:700}
+                .sb-verified-badge{display:inline-flex;align-items:center;gap:3px;padding:2px 7px;border-radius:20px;background:#eaf8f0;color:#198754;font-size:.7rem;font-weight:600}
+                .sb-review-comment{line-height:1.7}
+                .sb-review-image-link{display:inline-block}
+                .sb-review-image{width:76px;height:76px;object-fit:cover;border-radius:.5rem;border:1px solid #e9ecef;transition:opacity .2s ease}
+                .sb-review-image:hover{opacity:.8}
+                .sb-store-reply{padding:.75rem 1rem;border-left:3px solid var(--bs-primary);background:#f8f9fa;border-radius:0 .5rem .5rem 0}
+                .sb-no-reviews{border:1px dashed #dee2e6;border-radius:.75rem}
+                .sb-no-review-icon{font-size:2rem;color:#adb5bd}
+                @media(max-width:575.98px){.sb-review-summary,.sb-review-form{padding:1rem}.sb-review-item{padding:1rem 0}.sb-review-avatar{width:36px;height:36px;min-width:36px}.sb-review-header h4{font-size:1.15rem}}
+                </style>
+            </div>
         </div>
 
         @if ($related->isNotEmpty())

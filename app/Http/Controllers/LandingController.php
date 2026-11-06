@@ -3,9 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Models\Branch;
+use App\Models\ContactMessage;
+use App\Models\Plan;
 use App\Models\Product;
 use App\Models\Review;
 use App\Models\Subscriber;
+use App\Support\Tenancy;
 use Illuminate\Http\Request;
 
 class LandingController extends Controller
@@ -14,22 +17,54 @@ class LandingController extends Controller
     {
         $branches = Branch::live()
             ->withCount(['products' => fn ($q) => $q->where('is_active', true)])
-            ->when($request->filled('q'), fn ($q) => $q->where(fn ($w) => $w
-                ->where('store_name', 'like', '%'.$request->q.'%')
-                ->orWhere('address', 'like', '%'.$request->q.'%')))
+            ->when($request->filled('q'), fn($q) => $q->where(fn($w) => $w
+                ->where('store_name', 'like', '%' . $request->q . '%')
+                ->orWhere('address', 'like', '%' . $request->q . '%')))
             ->orderBy('store_name')
             ->get();
 
         $newArrivals = Product::active()
-            ->whereHas('branch', fn ($q) => $q->live())
+            ->whereHas('branch', fn($q) => $q->live())
             ->with('branch')->withCount('variants')
             ->latest()->take(8)->get();
 
         $reviews = Review::where('is_approved', true)->where('rating', '>=', 4)
-            ->whereHas('product.branch', fn ($q) => $q->live())
+            ->whereHas('product.branch', fn($q) => $q->live())
             ->with('product.branch')->latest()->take(6)->get();
 
         return view('landing', compact('branches', 'newArrivals', 'reviews'));
+    }
+
+    public function subscriptionPlan()
+    {
+        $plans = Plan::get();
+        return view('sb_frontend.subscription-plan', [
+            'plans' => $plans,
+        ]);
+    }
+
+    public function contactUs()
+    {
+        return view('sb_frontend.contact-us');
+    }
+
+    public function submitContactMessage(Request $request)
+    {
+        $data = $request->validate([
+            'name' => ['required', 'string', 'max:120'],
+            'sender_email' => ['required', 'email', 'max:150'],
+            'subject' => ['required', 'string', 'max:180'],
+            'message' => ['required', 'string', 'max:10000'],
+        ]);
+
+        ContactMessage::create([
+            'name' => $data['name'],
+            'email' => $data['sender_email'],
+            'subject' => $data['subject'],
+            'message' => $data['message'],
+        ]);
+
+        return back()->with('success', 'Your message has been sent successfully.');
     }
 
     public function subscribe(Request $request)
